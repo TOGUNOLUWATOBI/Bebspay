@@ -25,16 +25,16 @@ class BVNPage extends StatelessWidget{
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          // IconButton(
-                          //   icon: Icon(
-                          //     Icons.arrow_back_ios,
-                          //     size: 20,
-                          //   ),
-                          //   onPressed: () {
-                          //     Navigator.pop(context);
-                          //   },
-                          //   color: Color(0xff979797),
-                          // ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_ios,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            color: Color(0xff979797),
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 15),
                             child: Text(

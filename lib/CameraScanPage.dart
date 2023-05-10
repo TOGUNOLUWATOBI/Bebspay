@@ -11,6 +11,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'IdentificationPage.dart';
+import 'main.dart';
 
 class CameraScanPage extends StatefulWidget {
   CameraScanPage({required this.cameras, required this.header});
@@ -105,17 +106,18 @@ class _CameraScanPage extends State<CameraScanPage> {
                 child: Text(
                   "Adjust your face to fill the frame",
                   style: TextStyle(
-                        fontSize: 20,
-                        
-                        fontFamily: "Inter",
-                        color: Colors.white),
+                      fontSize: 20, fontFamily: "Inter", color: Colors.white),
                 ),
               ),
               SizedBox(
                 height: getProportionateScreenHeight(10),
               ),
               Padding(
-                padding: EdgeInsets.only(left:getProportionateScreenWidth(70), right:getProportionateScreenWidth(70), top: getProportionateScreenHeight(30), bottom: getProportionateScreenHeight(30) ),
+                padding: EdgeInsets.only(
+                    left: getProportionateScreenWidth(70),
+                    right: getProportionateScreenWidth(70),
+                    top: getProportionateScreenHeight(30),
+                    bottom: getProportionateScreenHeight(30)),
                 child: DottedBorder(
                   borderType: BorderType.Oval,
                   radius: Radius.circular(20),
@@ -128,7 +130,6 @@ class _CameraScanPage extends State<CameraScanPage> {
                       height: getProportionateScreenHeight(350),
                       width: getProportionateScreenHeight(300),
                       child: ClipOval(
-                        
                         child: isCapturedImage(),
                       ),
                     ),
@@ -138,34 +139,39 @@ class _CameraScanPage extends State<CameraScanPage> {
               RetakeButton(),
               SizedBox(
                 height: getProportionateScreenHeight(30),
-              ),              
+              ),
               MyButton(
                   text: isCaptured ? "Continue" : "Capture",
                   onTap: () {
-                    if(isCaptured)
-                    {
-                      //todo: check this code after deployment to confirm if it works
-                      Navigator.of(context).popUntil(ModalRoute.withName('/identificationPage'));
+                    if (isCaptured) {
+                      // todo: check this code after deployment to confirm if it works
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            //todo: change the message here
+                            builder: (context) => MyApp()),
+                        (r) {
+                          return false;
+                        },
+                      );
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BVNPage(textMessgae: "BVN")
+                          builder: (BuildContext context) =>
+                              IdentificationPage(cameras: cameras),
                         ),
                       );
-                      // Navigator.pushAndRemoveUntil(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       //todo: change the message here
-                      //       builder: (context) => BVNPage(textMessgae: "BVN")
-                      //   ),
-                      //   (r)
-                      //   {
-                      //     return false;
-                      //   },
-                      //   );
-                    }
-                    else{
-                    _onCapturePressed(context);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              BVNPage(textMessgae: "BVN"),
+                        ),
+                      );
+                    } else {
+                      _onCapturePressed(context);
                     }
                   },
                   enabled: true)
@@ -269,36 +275,31 @@ class _CameraScanPage extends State<CameraScanPage> {
     print(errorText);
   }
 
-
-  Widget isCapturedImage()
-  {
-    if(!isCaptured)
-    {
+  Widget isCapturedImage() {
+    if (!isCaptured) {
       return _cameraPreviewWidget();
-    }
-    else{
+    } else {
       return AspectRatio(
-      aspectRatio: cameraController.value.aspectRatio,
-      child: Image.file(File(imagePath),fit: BoxFit.fill,),
-    );
-      
+        aspectRatio: cameraController.value.aspectRatio,
+        child: Image.file(
+          File(imagePath),
+          fit: BoxFit.fill,
+        ),
+      );
     }
   }
 
-  Widget RetakeButton()
-  {
-    if(isCaptured)
-    {
+  Widget RetakeButton() {
+    if (isCaptured) {
       return MyButton(
-                  text: "Retake",
-                  onTap: () {
-                    setState(() {
-                      isCaptured = false;
-                    });
-                  },
-                  enabled: true);
-    }
-    else{
+          text: "Retake",
+          onTap: () {
+            setState(() {
+              isCaptured = false;
+            });
+          },
+          enabled: true);
+    } else {
       return Container();
     }
   }
