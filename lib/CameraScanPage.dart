@@ -28,10 +28,10 @@ class _CameraScanPage extends State<CameraScanPage> {
   String imagePath = "";
   bool isCaptured = false;
   late List<CameraDescription> cameras;
-  late CameraController cameraController =
-      CameraController(cameras[1], ResolutionPreset.high);
+  late CameraController cameraController;
 
-  late int selectedCameraIndex = 0;
+  
+  late int selectedCameraIndex = 1;
   late String imgPath;
 
   @override
@@ -42,22 +42,39 @@ class _CameraScanPage extends State<CameraScanPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    availableCameras().then((availableCameras) {
-      cameras = availableCameras;
-
-      if (cameras.length > 0) {
-        setState(() {
-          selectedCameraIndex = 1;
-        });
-        _initCameraController(cameras[selectedCameraIndex]).then((void v) {});
-      } else {
-        print("No camera available");
-      }
-    }).catchError((err) {
-      print('Error : ${err.code}');
-    });
     super.initState();
+   
+   initCamera(widget.cameras![1]);
+   
+    // TODO: implement initState
+    // availableCameras().then((availableCameras) {
+    //   cameras = availableCameras;
+
+    //   if (cameras.length > 0) {
+    //     setState(() {
+    //       selectedCameraIndex = 1;
+    //     });
+    //     _initCameraController(cameras[selectedCameraIndex]).then((void v) {});
+    //   } else {
+    //     print("No camera available");
+    //   }
+    // }).catchError((err) {
+    //   print('Error : ${err.code}');
+    // });
+    
+  }
+
+Future initCamera(CameraDescription cameraDescription) async {
+    cameraController =
+        CameraController(cameraDescription, ResolutionPreset.high);
+    try {
+      await cameraController.initialize().then((_) {
+        if (!mounted) return;
+        setState(() {});
+      });
+    } on CameraException catch (e) {
+      debugPrint("camera error $e");
+    }
   }
 
   @override
