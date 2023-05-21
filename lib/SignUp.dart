@@ -410,7 +410,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   Text(
                     "I agree to the ",
                     style: TextStyle(
-                      fontSize:18
+                      fontSize:16
                     ),
                     
                   ),
@@ -419,7 +419,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Text(
                           "terms and conditons",
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Color(0xff9766D5),
                               decoration: TextDecoration.underline),

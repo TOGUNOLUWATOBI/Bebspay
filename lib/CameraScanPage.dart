@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:app/BVNPage.dart';
-import 'package:app/PreviewScreen.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
@@ -44,7 +43,7 @@ class _CameraScanPage extends State<CameraScanPage> {
   void initState() {
     super.initState();
    
-   initCamera(widget.cameras![1]);
+   initCamera(widget.cameras[1]);
    
     // TODO: implement initState
     // availableCameras().then((availableCameras) {

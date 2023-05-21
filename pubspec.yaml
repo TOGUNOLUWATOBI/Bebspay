@@ -44,6 +44,7 @@ dependencies:
   path: ^1.8.2
   esys_flutter_share_plus: ^2.2.0
   dotted_border: ^2.0.0+3
+  flutter_svg: ^1.1.6
 
 flutter_native_splash:
   color: "#2D0051"
@@ -78,6 +79,11 @@ flutter:
     - assets/images/completelogo.png
     - assets/images/credit-card.png
     - assets/images/earth.png
+    - assets/images/Profile.png
+    - assets/images/NoTransaction.png
+    - assets/images/Home.svg
+    - assets/images/pay.svg
+    - assets/images/more.svg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

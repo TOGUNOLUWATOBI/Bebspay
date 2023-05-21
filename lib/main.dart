@@ -1,5 +1,7 @@
+import 'package:app/Dashboard.dart';
 import 'package:app/ForgotPasswordPage.dart';
 import 'package:app/SignUp.dart';
+import 'package:app/components/BottomNavigationBar.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
@@ -26,9 +28,8 @@ class MyApp extends StatelessWidget {
       title: 'Bebspay',
       theme: ThemeData(
         //primarySwatch: Colors.blue,
+        
         primaryColor: Color(0xFF2D0051),
-        
-        
         fontFamily: 'Opensans',
         textTheme: TextTheme(
           bodyText2: TextStyle(
@@ -131,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderSide: BorderSide(color: Color(0xff979797)),
                     ),
                   ),
+                  keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value!.isEmpty ) {
                       return "Please enter your email";
@@ -197,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ForgotPasswordPage()),
+                          builder: (context) => ForgotPasswordPage()),
                     );
                     print("bbbbbb");
                   },
@@ -205,7 +207,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: getProportionateScreenHeight(88),
                 ),
-                MyButton(text: "Sign In", onTap: signUserIn,enabled: true,),
+                MyButton(text: "Sign In", onTap: (){
+                  Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              ButtomNavBar(),
+                        ),
+                      );
+
+                },enabled: true,),
                 SizedBox(
                   height: getProportionateScreenHeight(140),
                 ),

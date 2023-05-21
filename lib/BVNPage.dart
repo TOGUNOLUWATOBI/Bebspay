@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'components/my_button.dart';
-class BVNPage extends StatelessWidget{
+
+class BVNPage extends StatelessWidget {
   String textMessgae;
   BVNPage({super.key, required this.textMessgae});
   @override
@@ -78,15 +79,19 @@ class BVNPage extends StatelessWidget{
                           LengthLimitingTextInputFormatter(11)
                         ],
                       ),
-                      SizedBox(height: getProportionateScreenHeight(120),),
-                      MyButton(text: "Continue", onTap: (() {
-                  //       Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => )
-                  // );
-                      }), enabled: true)
+                      SizedBox(
+                        height: getProportionateScreenHeight(120),
+                      ),
+                      MyButton(
+                          text: "Continue",
+                          onTap: (() {
+                            //       Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => )
+                            // );
+                          }),
+                          enabled: true)
                     ])))));
   }
-
 }
