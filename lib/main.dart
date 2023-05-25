@@ -17,7 +17,7 @@ void main() {
 
 void signUserIn() {}
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget { 
   const MyApp({super.key});
 
   // This widget is the root of your application.
@@ -78,7 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
     cameras = await availableCameras();
     FlutterNativeSplash.remove();
   }
-
+  final GlobalKey<FormState> formkey = GlobalKey();
+  TextEditingController email = TextEditingController();
+    TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -90,15 +92,18 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
 
     SizeConfig().init(context);
+    
+    
     return Scaffold(
       //resizeToAvoidBottomInset: false,
-
       backgroundColor: Color(0XFFffffff),
       body: SingleChildScrollView(
         child: Container(
           
           padding: const EdgeInsets.only(left: 31, right: 31),
           child: Form(
+            //yautovalidateMode: AutovalidateMode.onUserInteraction,
+            key: formkey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -122,6 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: getProportionateScreenHeight(101),
                 ),
                 TextFormField(
+                  controller: email,
+                  enableInteractiveSelection: true,
                   decoration: InputDecoration(
                     labelText: "Email",
                     labelStyle: TextStyle(color: Color(0xff979797)),
@@ -149,6 +156,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: getProportionateScreenHeight(44),
                 ),
                 TextFormField(
+                  controller: password,
+                  enableInteractiveSelection: true,
                   obscureText: !isVisible,
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
@@ -179,7 +188,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
                         .hasMatch(value)) {
                       return "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character";
-                    } else {
+                    }
+                     else {
                       return null;
                     }
                   },
@@ -196,6 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Color(0xff9766D5)),
                   ),
                   onPressed: () {
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -208,6 +219,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: getProportionateScreenHeight(88),
                 ),
                 MyButton(text: "Sign In", onTap: (){
+                  //todo: properly do validation
+                  if(!formkey.currentState!.validate()) return;
                   Navigator.push(
                         context,
                         MaterialPageRoute(

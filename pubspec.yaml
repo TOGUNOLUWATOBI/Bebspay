@@ -45,6 +45,7 @@ dependencies:
   esys_flutter_share_plus: ^2.2.0
   dotted_border: ^2.0.0+3
   flutter_svg: ^1.1.6
+  flutter_screenutil: ^5.7.0
 
 flutter_native_splash:
   color: "#2D0051"
