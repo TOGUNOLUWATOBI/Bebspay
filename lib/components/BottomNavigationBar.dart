@@ -4,7 +4,7 @@ import 'package:app/Dashboard.dart';
 import 'package:app/more.dart';
 import 'package:app/pay.dart';
 import 'package:app/size_config.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -86,14 +86,14 @@ class _ButtomNavBarState extends State<ButtomNavBar> {
         backgroundColor: Colors.transparent,
         useRootNavigator: true,
         isScrollControlled: true,
-        useSafeArea: true,
+        //useSafeArea: true,
         context: context,
         builder: (context) {
           return Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(getProportionateScreenWidth(22)),
             decoration: BoxDecoration(
               color: Color(0xFFD9D9D9),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(getProportionateScreenWidth(30))),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
