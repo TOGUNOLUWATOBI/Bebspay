@@ -47,6 +47,7 @@ dependencies:
   flutter_svg: ^1.1.6
   flutter_screenutil: ^5.7.0
   firebase_auth: ^4.6.1
+  device_info_plus: ^9.0.2
 
 flutter_native_splash:
   color: "#2D0051"
