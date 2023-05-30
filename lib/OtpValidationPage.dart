@@ -215,14 +215,14 @@ class _OtpValidationPageState extends State<OtpValidation> {
                     SizedBox(
                       height: getProportionateScreenHeight(140),
                     ),
-                    //todo: add timer for otp resend
+                    //TODO: add timer for otp resend
         
                     MyButton(text: "Submit", onTap: () {
                       
                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            //todo: change the message here
+                            //TODO: change the message here
                             builder: (context) {
                              
                               return passwordResetPage();

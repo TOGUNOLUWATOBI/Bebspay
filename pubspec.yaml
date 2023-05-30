@@ -38,7 +38,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_native_splash: ^2.2.18
   pin_code_fields: ^7.4.0
-  cached_network_image: ^3.2.3
   camera: ^0.10.4
   path_provider: ^2.0.14
   path: ^1.8.2
@@ -48,6 +47,7 @@ dependencies:
   flutter_screenutil: ^5.7.0
   firebase_auth: ^4.6.1
   device_info_plus: ^9.0.2
+  cached_network_image: ^3.2.3
 
 flutter_native_splash:
   color: "#2D0051"

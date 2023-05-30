@@ -101,7 +101,9 @@ class _ButtomNavBarState extends State<ButtomNavBar> {
                 PayBottomSheetCard(
                   image: 'assets/images/fundsTransfer.svg',
                   text: 'Funds Transfer',
-                  onPressed: () {},
+                  onPressed: () {
+                    
+                  },
                 ),
                 KDivider(),
                 PayBottomSheetCard(
