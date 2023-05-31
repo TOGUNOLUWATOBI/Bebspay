@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:app/Dashboard.dart';
+import 'package:app/Transfer.dart';
 import 'package:app/more.dart';
 import 'package:app/pay.dart';
 import 'package:app/size_config.dart';
@@ -102,7 +103,10 @@ class _ButtomNavBarState extends State<ButtomNavBar> {
                   image: 'assets/images/fundsTransfer.svg',
                   text: 'Funds Transfer',
                   onPressed: () {
-                    
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>  TransferPage()),);
                   },
                 ),
                 KDivider(),
