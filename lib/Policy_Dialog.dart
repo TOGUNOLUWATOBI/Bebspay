@@ -34,6 +34,7 @@ class PolicyDialog extends StatelessWidget {
                       styleSheet: MarkdownStyleSheet.fromTheme(ThemeData(
                           textTheme: TextTheme(
                               bodyText2: TextStyle(
+                                height: 1.5,
                                   fontSize: 18.0, color: Color.fromARGB(255, 82, 72, 72))))));
                 }
                 return Center(

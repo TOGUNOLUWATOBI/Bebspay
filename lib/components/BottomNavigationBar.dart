@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:app/Airtime.dart';
 import 'package:app/Dashboard.dart';
 import 'package:app/Transfer.dart';
 import 'package:app/more.dart';
@@ -113,7 +114,12 @@ class _ButtomNavBarState extends State<ButtomNavBar> {
                 PayBottomSheetCard(
                   image: 'assets/images/airtimePurchase.svg',
                   text: 'Airtime Purchase',
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>  AirtimePage()),);
+                  },
                 ),
                 KDivider(),
                 PayBottomSheetCard(
