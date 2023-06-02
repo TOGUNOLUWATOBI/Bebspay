@@ -30,7 +30,7 @@ class _AirtimePageState extends State<AirtimePage> {
       DropdownMenuItem(child: Text("Airtel"), value: "Airtel"),
       DropdownMenuItem(child: Text("GLO"), value: "GLO"),
       DropdownMenuItem(child: Text("MTN"), value: "MTN"),
-      DropdownMenuItem(child: Text("9Mobile"), value: "9Mobile"),
+      DropdownMenuItem(child: Text("9Mobile"), value: "NMobile"),
     ];
     return menuItems;
   }
