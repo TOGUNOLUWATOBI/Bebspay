@@ -105,7 +105,7 @@ class _AirtimePageState extends State<AirtimePage> {
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Color(0xff979797)),
                       ),
-                      focusedBorder: UnderlineInputBorder(
+                      focusedBorder: UnderlineInputBorder(    
                         borderSide: BorderSide(color: Color(0xff979797)),
                       ),
                     ),
