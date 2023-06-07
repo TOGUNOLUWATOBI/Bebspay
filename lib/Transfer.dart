@@ -27,7 +27,7 @@ class _TransferPageState extends State<TransferPage> {
     ];
     return menuItems;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +41,8 @@ class _TransferPageState extends State<TransferPage> {
               key: formkey,
               child: Column(children: [
                 Padding(
-                  padding: EdgeInsets.only(left: getProportionateScreenWidth(5)),
+                  padding:
+                      EdgeInsets.only(left: getProportionateScreenWidth(5)),
                   child: Row(
                     children: [
                       IconButton(
@@ -81,14 +82,13 @@ class _TransferPageState extends State<TransferPage> {
                         fontWeight: FontWeight.bold,
                         color: Color(0xff9766D5)),
                   ),
-                  onPressed: () {
-                   
-                  },
+                  onPressed: () {},
                 ),
-            
+
                 Padding(
-                  padding:  EdgeInsets.only(left:getProportionateScreenWidth(27),
-                  right: getProportionateScreenWidth(27)),
+                  padding: EdgeInsets.only(
+                      left: getProportionateScreenWidth(27),
+                      right: getProportionateScreenWidth(27)),
                   child: TextFormField(
                     controller: amount,
                     enableInteractiveSelection: true,
@@ -104,8 +104,8 @@ class _TransferPageState extends State<TransferPage> {
                     ),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(11)
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(11)
                     ],
                     validator: (value) {
                       //TODO: ask chizaram how to go about this
@@ -113,40 +113,39 @@ class _TransferPageState extends State<TransferPage> {
                         return "Please enter the amount";
                       }
                       return null;
-                    
                     },
-                    
                   ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(41)),
                 Padding(
-                  padding:  EdgeInsets.only(left:getProportionateScreenWidth(27),
-                  right: getProportionateScreenWidth(27)),
+                  padding: EdgeInsets.only(
+                      left: getProportionateScreenWidth(27),
+                      right: getProportionateScreenWidth(27)),
                   child: DropdownButtonFormField(
-                  decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff979797))),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xff979797)),
-                    ),
-                    filled: false,
-                    labelText: "Select Bank",
-                    labelStyle: TextStyle(color: Color(0xff979797)),
-                  ),
-                  //dropdownColor: Colors.blueAccent,
-                  //value: dropdownValue,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownValue = newValue!;
-                    });
-                  },
-                  items: dropdownItems),
-
+                      decoration: InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xff979797))),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xff979797)),
+                        ),
+                        filled: false,
+                        labelText: "Select Bank",
+                        labelStyle: TextStyle(color: Color(0xff979797)),
+                      ),
+                      //dropdownColor: Colors.blueAccent,
+                      //value: dropdownValue,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownValue = newValue!;
+                        });
+                      },
+                      items: dropdownItems),
                 ),
                 SizedBox(height: getProportionateScreenHeight(41)),
                 Padding(
-                  padding:  EdgeInsets.only(left:getProportionateScreenWidth(27),
-                  right: getProportionateScreenWidth(27)),
+                  padding: EdgeInsets.only(
+                      left: getProportionateScreenWidth(27),
+                      right: getProportionateScreenWidth(27)),
                   child: TextFormField(
                     controller: amount,
                     enableInteractiveSelection: true,
@@ -163,33 +162,103 @@ class _TransferPageState extends State<TransferPage> {
                     ),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(10),
-                    
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
                     ],
                     maxLength: 10,
-                                                        
                     validator: (value) {
                       //TODO: ask chizaram how to go about this
                       if (value!.isEmpty) {
                         return "Please enter the amount";
                       }
                       return null;
-                    
                     },
-                    
                   ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(90)),
 
                 //TODO: ask chizaram perform validation to make the button active
-                MyButton(text: "Continue", onTap: (){
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context) =>  PinConfirmationPage()));
-                }, 
-                //TODO: change this to the enabled parameter
-                enabled: true)
+                MyButton(
+                    text: "Continue",
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PinConfirmationPage()));
+                    },
+                    //TODO: change this to the enabled parameter
+                    enabled: true)
               ]),
             )));
   }
+
+  /// Transaction PIN Modal Sheet
+  // void _showModalBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //       context: context,
+  //       backgroundColor: Colors.transparent,
+  //       isScrollControlled: true,
+  //       isDismissible: false,
+  //       builder: (context) {
+  //         return WillPopScope(
+  //           onWillPop: () async {
+  //             Navigator.popUntil(
+  //                 context, ModalRoute.withName('/profileScreen'));
+  //             return false;
+  //           },
+  //           child: Container(
+  //             padding: EdgeInsets.only(
+  //                 top: getProportionateScreenHeight(20),
+  //                 left: getProportionateScreenWidth(20),
+  //                 right: getProportionateScreenWidth(20),
+  //                 bottom: MediaQuery.of(context).viewInsets.bottom),
+  //             decoration: const BoxDecoration(
+  //               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //               color: Colors.white,
+  //             ),
+  //             child: Column(mainAxisSize: MainAxisSize.min, children: [
+  //               Center(
+  //                 child: Text(
+  //                   'Enter PIN',
+  //                   style: Theme.of(context).textTheme.displayMedium,
+  //                 ),
+  //               ),
+  //               SizedBox(height: getProportionateScreenHeight(5)),
+  //               Text(
+  //                 'Enter your Transaction PIN below to continue',
+  //                 style: Theme.of(context)
+  //                     .textTheme
+  //                     .bodyMedium!
+  //                     .copyWith(fontWeight: FontWeight.bold),
+  //               ),
+  //               SizedBox(height: getProportionateScreenHeight(40)),
+
+  //               /// Transaction PIN Box
+  //               Center(
+  //                 child: Pinput(
+  //                   onCompleted: (value) {
+  //                     setState(() {
+  //                       //_otpController.text = value;
+  //                       //print(_otpController.text);
+  //                     });
+  //                   },
+  //                   length: 4,
+  //                   obscureText: true,
+  //                   textInputAction: TextInputAction.done,
+  //                   // defaultPinTheme: kDefaultPin(context),
+  //                   // focusedPinTheme: kFocusedPin(context),
+  //                 ),
+  //               ),
+  //               SizedBox(height: getProportionateScreenHeight(30)),
+  //               GeneralButton(
+  //                   text: 'Continue',
+  //                   onPressed: () {
+  //                     Navigator.pop(context);
+  //                   }),
+  //               SizedBox(height: getProportionateScreenHeight(20))
+  //             ]),
+  //           ),
+  //         );
+  //       });
+  // }
 }
