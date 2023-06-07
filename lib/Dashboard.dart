@@ -31,7 +31,7 @@ class _Dashboard extends State<Dashboard> {
                   CachedNetworkImage(
                     imageUrl:
                         //change this url
-                        'https://drive.google.com/uc?id=1kAyjiNbeurmmKwKTpqfMCJEWlQ-xm9sN',
+                        'https://drive.google.com/uc?id=1DKW_8cxs0vMyzqNWqhprXMwugI5rZwJl',
                     //TODO: check out how to use placeholders
                     //placeholder:image(),
                     progressIndicatorBuilder: (context, url, progress) =>
@@ -46,7 +46,7 @@ class _Dashboard extends State<Dashboard> {
                   SizedBox(
                     width: getProportionateScreenWidth(5),
                   ),
-                  //todo: change the name here
+                  //TODO: change the name here
                   Text("Hi Bebs,",
                       style: TextStyle(
                           fontSize: 24,

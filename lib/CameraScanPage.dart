@@ -160,11 +160,11 @@ Future initCamera(CameraDescription cameraDescription) async {
                   text: isCaptured ? "Continue" : "Capture",
                   onTap: () {
                     if (isCaptured) {
-                      // todo: check this code after deployment to confirm if it works
+                      // TODO: check this code after deployment to confirm if it works
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            //todo: change the message here
+                            //TODO: change the message here
                             builder: (context) => MyApp()),
                         (r) {
                           return false;

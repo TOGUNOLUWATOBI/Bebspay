@@ -1,9 +1,13 @@
+import 'package:animations/animations.dart';
 import 'package:app/IdentificationPage.dart';
+import 'package:app/TermsAndConditions.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'Policy_Dialog.dart';
 
 class SignUpPage extends StatefulWidget {
   SignUpPage({super.key,required this.cameras});
@@ -415,7 +419,20 @@ class _SignUpPageState extends State<SignUpPage> {
                     
                   ),
                   GestureDetector(
-                    onTap: (){},
+                    onTap: (){
+                      // Navigator.push(context, MaterialPageRoute(
+                      //   builder: (context) =>  TermsAndCondtions()));
+                      //  TermsAndCondtions();
+                       showModal(
+                      context: context,
+                      configuration: FadeScaleTransitionConfiguration(),
+                      builder: (context) {
+                        return PolicyDialog(
+                          mdFileName: 'TermsCondition.md',
+                        );
+                      },
+                    );
+                    },
                     child: Text(
                           "terms and conditons",
                           style: TextStyle(

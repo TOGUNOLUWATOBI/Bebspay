@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "672995256321",
+    "project_id": "bebspay",
+    "storage_bucket": "bebspay.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672995256321:android:626e438b1ee3e81775b800",
+        "android_client_info": {
+          "package_name": "com.example.bebspay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYQ1ZXv3T2T7gs9Zm2oN6mWHvppNOsT44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
