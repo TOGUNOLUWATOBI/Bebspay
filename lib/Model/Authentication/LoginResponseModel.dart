@@ -13,18 +13,18 @@ class LoginResponseModel {
     LoginResponseModel({this.email, this.accessToken, this.tokenType, this.expiresIn}); 
 
     LoginResponseModel.fromJson(Map<String, dynamic> json) {
-        email = json['Email'];
-        accessToken = json['AccessToken'];
-        tokenType = json['TokenType'];
-        expiresIn = json['ExpiresIn'];
+        email = json['email'];
+        accessToken = json['accessToken'];
+        tokenType = json['tokenType'];
+        expiresIn = DateTime.tryParse(json['expiresIn']);
     }
 
     Map<String, dynamic> toJson() {
         final Map<String, dynamic> data = Map<String, dynamic>();
-        data['Email'] = email;
-        data['AccessToken'] = accessToken;
-        data['TokenType'] = tokenType;
-        data['ExpiresIn'] = expiresIn;
+        data['email'] = email;
+        data['accessToken'] = accessToken;
+        data['tokenType'] = tokenType;
+        data['expiresIn'] = expiresIn;
         return data;
     }
 }

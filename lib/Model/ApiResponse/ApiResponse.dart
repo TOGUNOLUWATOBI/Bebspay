@@ -7,7 +7,8 @@ String apiResponseToJson(ApiResponse data) => json.encode(data.toJson());
 
 class ApiResponse {
     String? message;
-    String? code;
+    int? code;
+    String? status;
     dynamic data;
     String? statusCode;
     
@@ -16,6 +17,7 @@ class ApiResponse {
         this.message,
         this.code,
         required this.data,
+        this.status,
         this.statusCode
     });
 
@@ -23,6 +25,7 @@ class ApiResponse {
         message: json["message"],
         code: json["code"],
         data: json["data"],
+        status: json["status"],
         statusCode: json["statusCode"],
        
     );
@@ -31,6 +34,7 @@ class ApiResponse {
         "message": message,
         "code": code,
         "data": data,
+        "status": status,
         "statusCode": statusCode,       
     };
 }
