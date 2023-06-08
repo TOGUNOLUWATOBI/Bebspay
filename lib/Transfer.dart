@@ -1,7 +1,9 @@
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
+import 'package:app/components/pin_modal_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pinput/pinput.dart';
 import 'PinCofirmationPage.dart';
 import 'components/BalanceContainer.dart';
 
@@ -147,7 +149,7 @@ class _TransferPageState extends State<TransferPage> {
                       left: getProportionateScreenWidth(27),
                       right: getProportionateScreenWidth(27)),
                   child: TextFormField(
-                    controller: amount,
+                    controller: accountNumber,
                     enableInteractiveSelection: true,
                     decoration: InputDecoration(
                       counter: Offstage(),
@@ -181,10 +183,7 @@ class _TransferPageState extends State<TransferPage> {
                 MyButton(
                     text: "Continue",
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PinConfirmationPage()));
+                        _showModalBottomSheet(context);
                     },
                     //TODO: change this to the enabled parameter
                     enabled: true)
@@ -192,73 +191,69 @@ class _TransferPageState extends State<TransferPage> {
             )));
   }
 
-  /// Transaction PIN Modal Sheet
-  // void _showModalBottomSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //       context: context,
-  //       backgroundColor: Colors.transparent,
-  //       isScrollControlled: true,
-  //       isDismissible: false,
-  //       builder: (context) {
-  //         return WillPopScope(
-  //           onWillPop: () async {
-  //             Navigator.popUntil(
-  //                 context, ModalRoute.withName('/profileScreen'));
-  //             return false;
-  //           },
-  //           child: Container(
-  //             padding: EdgeInsets.only(
-  //                 top: getProportionateScreenHeight(20),
-  //                 left: getProportionateScreenWidth(20),
-  //                 right: getProportionateScreenWidth(20),
-  //                 bottom: MediaQuery.of(context).viewInsets.bottom),
-  //             decoration: const BoxDecoration(
-  //               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //               color: Colors.white,
-  //             ),
-  //             child: Column(mainAxisSize: MainAxisSize.min, children: [
-  //               Center(
-  //                 child: Text(
-  //                   'Enter PIN',
-  //                   style: Theme.of(context).textTheme.displayMedium,
-  //                 ),
-  //               ),
-  //               SizedBox(height: getProportionateScreenHeight(5)),
-  //               Text(
-  //                 'Enter your Transaction PIN below to continue',
-  //                 style: Theme.of(context)
-  //                     .textTheme
-  //                     .bodyMedium!
-  //                     .copyWith(fontWeight: FontWeight.bold),
-  //               ),
-  //               SizedBox(height: getProportionateScreenHeight(40)),
+  // Transaction PIN Modal Sheet
+  void _showModalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: true,
+        builder: (context) {
+          return 
+            Container(
+              padding: EdgeInsets.only(
+                  top: getProportionateScreenHeight(20),
+                  left: getProportionateScreenWidth(20),
+                  right: getProportionateScreenWidth(20),
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                color: Colors.white,
+              ),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Center(
+                  child: Text(
+                    'Enter PIN',
+                    style: Theme.of(context).textTheme.displayMedium,
+                  ),
+                ),
+                SizedBox(height: getProportionateScreenHeight(5)),
+                Text(
+                  'Enter your Transaction PIN below to continue',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: getProportionateScreenHeight(40)),
 
-  //               /// Transaction PIN Box
-  //               Center(
-  //                 child: Pinput(
-  //                   onCompleted: (value) {
-  //                     setState(() {
-  //                       //_otpController.text = value;
-  //                       //print(_otpController.text);
-  //                     });
-  //                   },
-  //                   length: 4,
-  //                   obscureText: true,
-  //                   textInputAction: TextInputAction.done,
-  //                   // defaultPinTheme: kDefaultPin(context),
-  //                   // focusedPinTheme: kFocusedPin(context),
-  //                 ),
-  //               ),
-  //               SizedBox(height: getProportionateScreenHeight(30)),
-  //               GeneralButton(
-  //                   text: 'Continue',
-  //                   onPressed: () {
-  //                     Navigator.pop(context);
-  //                   }),
-  //               SizedBox(height: getProportionateScreenHeight(20))
-  //             ]),
-  //           ),
-  //         );
-  //       });
-  // }
+                /// Transaction PIN Box
+                Center(
+                  child: Pinput(
+                    onCompleted: (value) {
+                      setState(() {
+                        //_otpController.text = value;
+                        //print(_otpController.text);
+                      });
+                    },
+                    length: 4,
+                    obscureText: true,
+                    textInputAction: TextInputAction.done,
+                    // defaultPinTheme: kDefaultPin(context),
+                    // focusedPinTheme: kFocusedPin(context),
+                  ),
+                ),
+                SizedBox(height: getProportionateScreenHeight(100)),
+                MyButton(
+                    text: 'Continue',
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    enabled: true,),
+                SizedBox(height: getProportionateScreenHeight(20))
+              ]),
+            
+          );
+        });
+  }
 }
