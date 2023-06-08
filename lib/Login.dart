@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:app/Model/Authentication/LoginRequestModel.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'package:device_info_plus/device_info_plus.dart';
 import 'ForgotPasswordPage.dart';
 import 'Service/Authentication/Authentication.dart';
 import 'SignUp.dart';
@@ -13,7 +15,10 @@ import 'components/BottomNavigationBar.dart';
 import 'components/my_button.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({super.key, required this.title, });
+  MyHomePage({
+    super.key,
+    required this.title,
+  });
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -25,32 +30,69 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
-  
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  static final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  Map<String, dynamic> _deviceData = <String, dynamic>{};
 
-  final storage = new FlutterSecureStorage();  
+  final storage = new FlutterSecureStorage();
   late bool isLoading = false;
 
   bool isVisible = false;
-  List<CameraDescription>? cameras ;
+  List<CameraDescription>? cameras;
 
   @override
   void initState() {
     super.initState();
     initialization();
+    initPlatformState();
   }
 
   void initialization() async {
     cameras = await availableCameras();
     FlutterNativeSplash.remove();
   }
+
+  Future<void> initPlatformState() async {
+    var deviceData = <String, dynamic>{};
+
+    try {
+      if (Platform.isAndroid) {
+        deviceData = readAndroidBuildData(await deviceInfo.androidInfo);
+        
+      } else if (Platform.isIOS) {
+        deviceData = readIosDeviceInfo( await deviceInfo.iosInfo);
+      } else if (Platform.isLinux) {
+        deviceData= readLinuxDeviceInfo(await deviceInfo.linuxInfo);
+      } else if (Platform.isMacOS) {
+        deviceData = readMacOsDeviceInfo(await deviceInfo.macOsInfo);
+      } else if (Platform.isWindows) {
+        deviceData = readWindowsDeviceInfo(await deviceInfo.windowsInfo);
+      } 
+      else{
+      final info = await deviceInfo.deviceInfo;
+      }
+      print(deviceData);
+      print(await determinePosition());
+    }  
+    catch (e){
+      deviceData = <String, dynamic>{
+        'Error:': 'Failed to get platform version.'
+      };
+    }
+    if (!deviceData.isEmpty) return;
+    setState(() {
+      _deviceData = deviceData;
+    });
+  }
+
   final GlobalKey<FormState> formkey = GlobalKey();
   TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
+  TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -62,14 +104,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
 
     SizeConfig().init(context);
-    
-    
+
     return Scaffold(
       //resizeToAvoidBottomInset: false,
       backgroundColor: Color(0XFFffffff),
       body: SingleChildScrollView(
         child: Container(
-          
           padding: const EdgeInsets.only(left: 31, right: 31),
           child: Form(
             //yautovalidateMode: AutovalidateMode.onUserInteraction,
@@ -111,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
-                    if (value!.isEmpty ) {
+                    if (value!.isEmpty) {
                       return "Please enter your email";
                     }
                     if (!RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -158,8 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
                         .hasMatch(value)) {
                       return "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character";
-                    }
-                     else {
+                    } else {
                       return null;
                     }
                   },
@@ -176,7 +215,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Color(0xff9766D5)),
                   ),
                   onPressed: () {
-
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -188,51 +226,43 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: getProportionateScreenHeight(88),
                 ),
-                MyButton(text: "Sign In", onTap: () async{
+                MyButton(
+                  text: "Sign In",
+                  onTap: () async {
+                    //todo: properly do validation
+                    if (!formkey.currentState!.validate()) {
+                      setState(() {
+                        isLoading = true;
+                      });
 
+                      if (await hasInternetConnection()) {
+                        //push to home page OR LOGIN PAGE after creating the account
 
-                  
-
-
-                  //todo: properly do validation
-                  if(!formkey.currentState!.validate()) {
-                     
+                        var loginResponseModel = await login(LoginRequestModel(
+                            emailAddress: email.text, password: password.text));
+                        if (loginResponseModel != null) {
+                          storeToken(loginResponseModel!.accessToken!);
+                          print(getToken());
+                        }
+                      } else {
                         setState(() {
-                          isLoading = true;
+                          isLoading = false;
                         });
-
-                        if (await hasInternetConnection()) {
-                          //push to home page OR LOGIN PAGE after creating the account
-
-                          var loginResponseModel = await login(LoginRequestModel(
-                              emailAddress: email.text,
-                              password: password.text));
-                            if(loginResponseModel != null)
-                            {
-                              storeToken(loginResponseModel!.accessToken!);
-                              print(getToken());
-                            }
-                          
-                        }
-                        else {
-                          setState(() {
-                            isLoading = false;
-                          });
-                          // showErrorSnackBar(
-                          //     "Failed to connect, Check your internet connection",
-                          //     context);
-                        }
+                        // showErrorSnackBar(
+                        //     "Failed to connect, Check your internet connection",
+                        //     context);
                       }
-                  
-                  Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              ButtomNavBar(),
-                        ),
-                      );
+                    }
 
-                },enabled: true,),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => ButtomNavBar(),
+                      ),
+                    );
+                  },
+                  enabled: true,
+                ),
                 SizedBox(
                   height: getProportionateScreenHeight(140),
                 ),
@@ -257,10 +287,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       onPressed: () {
                         Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>  SignUpPage(cameras: cameras!,)),
-                  );
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignUpPage(
+                                    cameras: cameras!,
+                                  )),
+                        );
                       },
                     ),
                   ],
