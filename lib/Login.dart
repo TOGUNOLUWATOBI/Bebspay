@@ -241,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         var loginResponseModel = await login(LoginRequestModel(
                             emailAddress: email.text, password: password.text));
                         if (loginResponseModel != null) {
-                          storeToken(loginResponseModel!.accessToken!);
+                          storeToken(loginResponseModel.accessToken!);
                           print(getToken());
                         }
                       } else {
