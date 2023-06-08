@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:app/Model/Authentication/LoginRequestModel.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -55,6 +56,33 @@ class _MyHomePageState extends State<MyHomePage> {
   void initialization() async {
     cameras = await availableCameras();
     FlutterNativeSplash.remove();
+  }
+
+  void requestPermission() async{
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized)
+    {
+      print("User Granted Permission");
+    }
+    else if(settings.authorizationStatus == AuthorizationStatus.provisional)
+    {
+      print("user granted provisional permission");
+    }
+    else
+    {
+       print("user declined or as not accepted permission");
+    }
   }
 
   Future<void> initPlatformState() async {
