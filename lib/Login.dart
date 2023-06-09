@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   initInfo() {
     var androidInitialize =
-        const AndroidInitializationSettings('@mipmap/ic_launcher');
+        const AndroidInitializationSettings('logo');
     var iosInitializer = const DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -115,7 +115,8 @@ class _MyHomePageState extends State<MyHomePage> {
               styleInformation: bigTextStyleInformation,
               priority: Priority.high,
               playSound: true,
-              sound: RawResourceAndroidNotificationSound('notification'));
+              // sound: RawResourceAndroidNotificationSound('notification')
+              );
 
       NotificationDetails platformChannelSpecifics =
           NotificationDetails(android: androidPlatformChannelSpecifics,iOS: const DarwinNotificationDetails());

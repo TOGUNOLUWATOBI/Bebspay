@@ -60,11 +60,17 @@ dependencies:
   flutter_local_notifications: ^14.1.1
   firebase_core: ^2.13.1
   cloud_firestore: ^4.8.0
+  flutter_launcher_icons: ^0.12.0
 
 flutter_native_splash:
   color: "#2D0051"
   image: "assets/images/BebspayLogo.png"
   web: false
+
+flutter_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/Logop.png"
 
 dev_dependencies:
   flutter_test:
