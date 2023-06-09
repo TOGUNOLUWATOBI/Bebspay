@@ -5,10 +5,16 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'Login.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async
+{
+  print('Handling a background message ${message.messageId}');
+}
+
 Future main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseMessaging.instance.getInitialMessage();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const MyApp());
 }
