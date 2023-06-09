@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:app/Model/Authentication/LoginRequestModel.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -39,6 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
   static final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   Map<String, dynamic> _deviceData = <String, dynamic>{};
 
+  String? mToken = "";
+
   final storage = new FlutterSecureStorage();
   late bool isLoading = false;
 
@@ -50,11 +54,110 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     initialization();
     initPlatformState();
+    requestPermission();
+    getFCMToken();
+    initInfo();
   }
 
   void initialization() async {
     cameras = await availableCameras();
     FlutterNativeSplash.remove();
+  }
+
+  initInfo() {
+    var androidInitialize =
+        const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var iosInitializer = const DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    var initializationSettings =
+        InitializationSettings(android: androidInitialize, iOS: iosInitializer);
+
+    FlutterLocalNotificationsPlugin().initialize(initializationSettings,
+        onDidReceiveNotificationResponse:
+            (NotificationResponse notificationResponse) async {
+              try
+              {
+                if(notificationResponse.payload != null && notificationResponse.payload!.isNotEmpty)
+                {
+
+                }
+                else
+                {
+
+                }
+              }
+              catch(e)
+              {
+
+              }
+              return;
+            });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      print("..................onMessage...................");
+      print(
+          "onMessage: ${message.notification?.title}/${message.notification?.body}");
+
+      BigTextStyleInformation bigTextStyleInformation = BigTextStyleInformation(
+        message.notification!.body.toString(),
+        htmlFormatBigText: true,
+        contentTitle: message.notification!.body.toString(),
+        htmlFormatContent: true,
+      );
+
+      AndroidNotificationDetails androidPlatformChannelSpecifics =
+          AndroidNotificationDetails("dbfood", "dbfood",
+              importance: Importance.high,
+              styleInformation: bigTextStyleInformation,
+              priority: Priority.high,
+              playSound: true,
+              sound: RawResourceAndroidNotificationSound('notification'));
+
+      NotificationDetails platformChannelSpecifics =
+          NotificationDetails(android: androidPlatformChannelSpecifics,iOS: const DarwinNotificationDetails());
+
+      await FlutterLocalNotificationsPlugin().show(
+          0,
+          message.notification?.title,
+          message.notification?.body,
+          platformChannelSpecifics,
+          payload: message.data['body']);
+    });
+  }
+
+  void getFCMToken() async {
+    await FirebaseMessaging.instance.getToken().then((value) {
+      setState(() {
+        mToken = value;
+        print("My token is : $mToken");
+      });
+    });
+  }
+
+  void requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true);
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print("User Granted Permission");
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print("user granted provisional permission");
+    } else {
+      print("user declined or as not accepted permission");
+    }
   }
 
   Future<void> initPlatformState() async {
@@ -63,23 +166,20 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       if (Platform.isAndroid) {
         deviceData = readAndroidBuildData(await deviceInfo.androidInfo);
-        
       } else if (Platform.isIOS) {
-        deviceData = readIosDeviceInfo( await deviceInfo.iosInfo);
+        deviceData = readIosDeviceInfo(await deviceInfo.iosInfo);
       } else if (Platform.isLinux) {
-        deviceData= readLinuxDeviceInfo(await deviceInfo.linuxInfo);
+        deviceData = readLinuxDeviceInfo(await deviceInfo.linuxInfo);
       } else if (Platform.isMacOS) {
         deviceData = readMacOsDeviceInfo(await deviceInfo.macOsInfo);
       } else if (Platform.isWindows) {
         deviceData = readWindowsDeviceInfo(await deviceInfo.windowsInfo);
-      } 
-      else{
-      final info = await deviceInfo.deviceInfo;
+      } else {
+        final info = await deviceInfo.deviceInfo;
       }
-      print(deviceData);
+      //print(deviceData);
       print(await determinePosition());
-    }  
-    catch (e){
+    } catch (e) {
       deviceData = <String, dynamic>{
         'Error:': 'Failed to get platform version.'
       };

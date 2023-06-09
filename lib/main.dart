@@ -1,19 +1,20 @@
-import 'package:app/Dashboard.dart';
-import 'package:app/ForgotPasswordPage.dart';
-import 'package:app/SignUp.dart';
-import 'package:app/components/BottomNavigationBar.dart';
-import 'package:app/components/my_button.dart';
-import 'package:app/size_config.dart';
-import 'package:camera/camera.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'Login.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async
+{
+  print('Handling a background message ${message.messageId}');
+}
+
 Future main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseMessaging.instance.getInitialMessage();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const MyApp());
 }

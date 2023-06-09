@@ -56,6 +56,10 @@ dependencies:
   json_annotation: ^4.8.0
   pinput: ^2.2.21
   geolocator: ^9.0.2
+  firebase_messaging: ^14.6.2
+  flutter_local_notifications: ^14.1.1
+  firebase_core: ^2.13.1
+  cloud_firestore: ^4.8.0
 
 flutter_native_splash:
   color: "#2D0051"
