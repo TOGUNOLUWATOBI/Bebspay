@@ -330,7 +330,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 MyButton(
                   text: "Sign In",
                   onTap: () async {
-                    //todo: properly do validation
+                    //TODO: properly do validation
                     if (!formkey.currentState!.validate()) {
                       setState(() {
                         isLoading = true;

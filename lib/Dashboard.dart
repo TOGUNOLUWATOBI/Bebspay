@@ -1,3 +1,4 @@
+import 'package:app/FundWallet.dart';
 import 'package:app/size_config.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -96,7 +97,12 @@ class _Dashboard extends State<Dashboard> {
                           height: getProportionateScreenHeight(50),
                           child: GestureDetector(
                             //TODO: implement this function or page => Navigator.push and then display flutterwave static account
-                            onTap: FundWallet,
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FundWalletpage()));
+                            },
                             child: Container(
                               //padding: EdgeInsets.all(40),
                               //margin: EdgeInsets.symmetric(horizontal:  2),
@@ -165,7 +171,6 @@ class _Dashboard extends State<Dashboard> {
                 width: getProportionateScreenWidth(342),
               ),
               SizedBox(height: getProportionateScreenHeight(55)),
-              
             ],
           ),
         )));
@@ -175,5 +180,3 @@ class _Dashboard extends State<Dashboard> {
 Widget image() {
   return Image.asset("assets/images/completelogo.png");
 }
-
-void FundWallet() {}

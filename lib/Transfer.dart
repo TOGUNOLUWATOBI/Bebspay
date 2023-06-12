@@ -239,8 +239,14 @@ class _TransferPageState extends State<TransferPage> {
                     length: 4,
                     obscureText: true,
                     textInputAction: TextInputAction.done,
-                    // defaultPinTheme: kDefaultPin(context),
+                    
+                    defaultPinTheme: PinTheme(
+                      textStyle: TextStyle(
+                        fontWeight: FontWeight.w400,
+                      )
+                    ),
                     // focusedPinTheme: kFocusedPin(context),
+                    
                   ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(100)),

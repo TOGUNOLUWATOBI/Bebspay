@@ -7,6 +7,7 @@ import 'package:app/size_config.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import 'AccountDetails.dart';
 import 'Policy_Dialog.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -30,7 +31,7 @@ class MoreScreen extends StatelessWidget {
                 CachedNetworkImage(
                   imageUrl:
                       //change this url
-                      
+
                       'https://drive.google.com/uc?id=1DKW_8cxs0vMyzqNWqhprXMwugI5rZwJl',
                   //TODO: check out how to use placeholders
                   //placeholder:image(),
@@ -45,7 +46,7 @@ class MoreScreen extends StatelessWidget {
                 SizedBox(
                   width: getProportionateScreenHeight(15),
                 ),
-                //todo: change the name here
+                //TODO: change the name here
                 Text("Togun",
                     style: TextStyle(
                         fontSize: 24, color: Theme.of(context).primaryColor)),
@@ -55,17 +56,31 @@ class MoreScreen extends StatelessWidget {
                 SizedBox(
                   height: getProportionateScreenHeight(30),
                 ),
-                //change the icons later
+                //TODO: change the icons later
+                MyMoreContainer(
+                    icon: Icon(Icons.lock,
+                        size: 20, color: Theme.of(context).primaryColor),
+                    text: "Account Details",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AccountDetailsPage()),
+                      );
+                    }),
+                SizedBox(
+                  height: getProportionateScreenHeight(46),
+                ),
                 MyMoreContainer(
                     icon: Icon(Icons.lock,
                         size: 20, color: Theme.of(context).primaryColor),
                     text: "Change Password",
                     onTap: () {
-                       Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>  ChnagePasswordPage()),
-                  );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChnagePasswordPage()),
+                      );
                     }),
                 SizedBox(
                   height: getProportionateScreenHeight(46),
@@ -75,11 +90,10 @@ class MoreScreen extends StatelessWidget {
                         size: 20, color: Theme.of(context).primaryColor),
                     text: "Security",
                     onTap: () {
-                       Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>  SecurityPage()),
-                  );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SecurityPage()),
+                      );
                     }),
                 SizedBox(
                   height: getProportionateScreenHeight(46),
@@ -87,15 +101,15 @@ class MoreScreen extends StatelessWidget {
                 MyMoreContainer(
                     text: "Terms And Conditions",
                     onTap: () {
-                        showModal(
-                      context: context,
-                      configuration: FadeScaleTransitionConfiguration(),
-                      builder: (context) {
-                        return PolicyDialog(
-                          mdFileName: 'TermsCondition.md',
-                        );
-                      },
-                    );
+                      showModal(
+                        context: context,
+                        configuration: FadeScaleTransitionConfiguration(),
+                        builder: (context) {
+                          return PolicyDialog(
+                            mdFileName: 'TermsCondition.md',
+                          );
+                        },
+                      );
                     },
                     icon: Icon(Icons.lock,
                         size: 20, color: Theme.of(context).primaryColor)),
