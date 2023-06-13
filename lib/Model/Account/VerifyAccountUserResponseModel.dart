@@ -9,16 +9,16 @@ VerifyAccountUserResponseModel verifyAccountUserResponseModelFromJson(String str
 String verifyAccountUserResponseModelToJson(VerifyAccountUserResponseModel data) => json.encode(data.toJson());
 
 class VerifyAccountUserResponseModel {
-    String accountNumber;
-    String bankName;
-    String bankCode;
-    String accountName;
+    String? accountNumber;
+    String? bankName;
+    String? bankCode;
+    String? accountName;
 
     VerifyAccountUserResponseModel({
-        required this.accountNumber,
-        required this.bankName,
-        required this.bankCode,
-        required this.accountName,
+        this.accountNumber,
+        this.bankName,
+        this.bankCode,
+        this.accountName,
     });
 
     factory VerifyAccountUserResponseModel.fromJson(Map<String, dynamic> json) => VerifyAccountUserResponseModel(

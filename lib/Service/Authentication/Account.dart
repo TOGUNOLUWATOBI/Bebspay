@@ -1,5 +1,6 @@
 import 'package:app/Model/Account/TransactionDto.dart';
 import 'package:app/Model/Account/TransferRequestModel.dart';
+import 'package:app/Model/Account/VerifyAccountUserRequestModel.dart';
 import 'package:app/Model/RequestModel/AddTransactionPinModel.dart';
 import 'package:app/Model/RequestModel/BuyAirtimeRequestModel.dart';
 import 'package:app/Model/RequestModel/ChangePanicPinModel.dart';
@@ -7,6 +8,13 @@ import 'package:app/Model/RequestModel/ChangeTransactionPinModel.dart';
 import 'package:app/Model/RequestModel/CheckTransactionPinModel.dart';
 import 'package:app/Service/Authentication/Authentication.dart';
 import 'package:http/http.dart' as http;
+import '../../Model/Account/AccountDetails.dart';
+import '../../Model/Account/Banks.dart';
+import '../../Model/Account/DashboardDetails.dart';
+import '../../Model/Account/Databundle.dart';
+import '../../Model/Account/FeeResponseModel.dart';
+import '../../Model/Account/FundWalletDto.dart';
+import '../../Model/Account/VerifyAccountUserResponseModel.dart';
 import '../../Model/ApiResponse/ApiResponse.dart';
 import '../../Model/RequestModel/AddPanicPinModel.dart';
 
@@ -204,6 +212,209 @@ Future<TransactionDto?> BuyAirtimeData(BuyAirtimeRequestModel model) async {
 }
 
 
+Future<double?> GetFeeAmount (int amount) async
+{
+ String url =
+      "https://fypbackend.azurewebsites.net/Account/api/v1/GetAmountFees?amount=$amount";
+  try {
+    var response = await http.get(
+      Uri.parse(url),      
+    );
+    print(response.body);
+    var res = apiResponseFromJson(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      var feeResponseModel = feeResponseModelFromJson(res.data);
+      return feeResponseModel.data!.first.fee;      
+    }
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+
+Future<VerifyAccountUserResponseModel?> VerifyAccount (VerifyAccountUserRequestModel model) async
+{
+ String url =
+      "https://fypbackend.azurewebsites.net/Account/api/v1/VerifyAccountDetails";
+  try {
+    var response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: verifyAccountUserRequestModelToJson(model),      
+    );
+    print(response.body);
+    var res = apiResponseFromJson(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      var verifyAccountResponseModel = verifyAccountUserResponseModelFromJson(res.data);
+      return verifyAccountResponseModel;
+    }
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+
+Future<DashboardDetails?> GetDashboardDetails () async
+{
+ String url =
+      "https://fypbackend.azurewebsites.net/Account/api/v1/dashboard";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: headers,
+            
+    );
+    print(response.body);
+    var res = apiResponseFromJson(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      var dashboardDetails = dashboardDetailsFromJson(res.data);
+      return dashboardDetails;
+    }
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+
+Future<AccountDetails?> GetAccountDetails () async
+{
+ String url =
+      "https://fypbackend.azurewebsites.net/Account/api/v1/UserAccountDetails";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: headers,
+            
+    );
+    print(response.body);
+    var res = apiResponseFromJson(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      var accountDetails = accountDetailsFromJson(res.data);
+      return accountDetails;
+    }
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+
+Future<FundWalletDto?> GetFundWalletDetails () async
+{
+ String url =
+      "https://fypbackend.azurewebsites.net/Account/api/v1/FundWalletDetails";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: headers,
+            
+    );
+    print(response.body);
+    var res = apiResponseFromJson(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      var fundWalletDto = fundWalletDtoFromJson(res.data);
+      return fundWalletDto;
+    }
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+
+Future<List<Bank>?> GetBanks () async
+{
+ String url =
+      "https://localhost:5001/Account/api/v1/banks";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: headers,
+            
+    );
+    print(response.body);
+    var res = apiResponseFromJson(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      var banks = bankFromJson(res.data);
+      return banks;
+    }
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+
+Future<List<TransactionDto>?> GetTransactions (int count) async
+{
+ String url =
+      "https://localhost:5001/Account/api/v1/transactions?count=$count";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: headers,
+            
+    );
+    print(response.body);
+    var res = apiResponseFromJson(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      var transactions = List<TransactionDto>.from(res.data.map((x) => TransactionDto.fromJson(x)));
+      return transactions;
+    }
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+Future<List<BillCategories>?> GetDataBundle (String serviceProvider) async
+{
+ String url =
+      "https://localhost:5001/Account/api/v1/GetDataBundles?serviceProvier=$serviceProvider";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: headers,
+            
+    );
+    print(response.body);
+    var res = apiResponseFromJson(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      var dataBundles = List<BillCategories>.from(res.data.map((x) => BillCategories.fromJson(x)));
+      return dataBundles ;
+    }
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
 
 
 
