@@ -101,7 +101,8 @@ class _Dashboard extends State<Dashboard> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => FundWalletpage()));
+                                    //TODO: change the page to the fund wallet page
+                                      builder: (context) => FundWalletpage(accountNumber: '', BankName: '', accountName: '',)));
                             },
                             child: Container(
                               //padding: EdgeInsets.all(40),
