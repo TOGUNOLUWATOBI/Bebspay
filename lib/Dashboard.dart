@@ -1,8 +1,10 @@
 import 'package:app/FundWallet.dart';
+import 'package:app/components/TransactionCard.dart';
 import 'package:app/size_config.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'Model/Account/TransactionDto.dart';
 
 
 class Dashboard extends StatefulWidget {
@@ -11,6 +13,9 @@ class Dashboard extends StatefulWidget {
 }
 
 class _Dashboard extends State<Dashboard> {
+  bool isTransactionAvailable = true;
+  List<TransactionDto>? transactions = [];
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,7 +106,7 @@ class _Dashboard extends State<Dashboard> {
                                   context,
                                   MaterialPageRoute(
                                     //TODO: change the page to the fund wallet page
-                                      builder: (context) => FundWalletpage(accountNumber: '', BankName: '', accountName: '',)));
+                                      builder: (context) => FundWalletpage(accountNumber: '', bankName: '', accountName: '',)));
                             },
                             child: Container(
                               //padding: EdgeInsets.all(40),
@@ -165,11 +170,12 @@ class _Dashboard extends State<Dashboard> {
                 ],
               ),
               SizedBox(height: getProportionateScreenHeight(30)),
-              Image.asset(
-                "assets/images/NoTransaction.png",
-                height: getProportionateScreenHeight(342),
-                width: getProportionateScreenWidth(342),
-              ),
+              // Image.asset(
+              //   "assets/images/NoTransaction.png",
+              //   height: getProportionateScreenHeight(342),
+              //   width: getProportionateScreenWidth(342),
+              // ),
+              Transaction(context,isTransactionAvailable, transactions),
               SizedBox(height: getProportionateScreenHeight(55)),
             ],
           ),
@@ -177,6 +183,58 @@ class _Dashboard extends State<Dashboard> {
   }
 }
 
-Widget image() {
-  return Image.asset("assets/images/completelogo.png");
+Widget Transaction(BuildContext context,bool isTransactionAvailable, List<TransactionDto>? transactions) {
+  transactions!.add(new TransactionDto(beneficiary: "Test", amount: 1000, postingType: "Dr"));
+  transactions!.add(new TransactionDto(beneficiary: "Test", amount: 1000, postingType: "Dr"));
+  transactions!.add(new TransactionDto(beneficiary: "Test", amount: 1000, postingType: "Dr"));
+  if(isTransactionAvailable == false)
+  {
+    return Image.asset(
+                "assets/images/NoTransaction.png",
+                height: getProportionateScreenHeight(342),
+                width: getProportionateScreenWidth(342),
+              );
+  }
+  List<Widget> cards = [];
+  for (var transaction in transactions!) {
+    bool isdebit = transaction.postingType == "Dr" ? true : false;
+    cards.add(TransactionCard(ticketDescription: transaction.beneficiary, amount: transaction.amount, isDebit: isdebit));
+      
+  }
+
+//  return SingleChildScrollView(
+//    child: ListView(
+//     children: cards.map((widget) {
+//       return Column(
+//         children: <Widget>[
+//           SizedBox(height: 10),  // Adds 10 pixels of spacing
+//           widget,
+//         ],
+//       );
+//     }).toList(),
+//  ),
+//  );
+
+
+ return Container(
+    height: MediaQuery.of(context).size.height,  // Provide a fixed height
+    child: ListView(
+      children: cards.map((widget) {
+        return Column(
+          children: <Widget>[
+            SizedBox(height: 10),  // Adds 10 pixels of spacing
+            widget,
+          ],
+        );
+      }).toList(),
+    ),
+  );
+
+  // return Expanded(
+  //   child: SingleChildScrollView(
+  //     child: Column(
+  //       children: cards,
+  //     ),
+  //   ),
+  // );
 }

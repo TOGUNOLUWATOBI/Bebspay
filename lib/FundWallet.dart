@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 class FundWalletpage extends StatelessWidget {
   final String accountName;
   final String accountNumber;
-  final String BankName;
-  const FundWalletpage({super.key, required this.accountName, required this.accountNumber, required this.BankName});
+  final String bankName;
+  const FundWalletpage({super.key, required this.accountName, required this.accountNumber, required this.bankName});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class FundWalletpage extends StatelessWidget {
               SizedBox(height: getProportionateScreenHeight(46),),
               MyDetailsContainer(header: "Account Number", value: accountNumber),
               SizedBox(height: getProportionateScreenHeight(46),),
-              MyDetailsContainer(header: "Bank Name", value: BankName),
+              MyDetailsContainer(header: "Bank Name", value: bankName),
               SizedBox(height: getProportionateScreenHeight(46),),
             ],
           ),

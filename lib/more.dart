@@ -65,7 +65,8 @@ class MoreScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => AccountDetailsPage()),
+                          //TODO call the right endpoint here
+                            builder: (context) => AccountDetailsPage(accountNumber: '', bankName: '', fullName: '', limit: 0, tier: 0,)),
                       );
                     }),
                 SizedBox(
