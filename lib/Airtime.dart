@@ -1,8 +1,8 @@
+import 'package:app/PinCofirmationPage.dart';
 import 'package:app/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'PinCofirmationPage.dart';
 import 'components/BalanceContainer.dart';
 import 'components/my_button.dart';
 
@@ -183,7 +183,7 @@ class _AirtimePageState extends State<AirtimePage> {
                 //TODO: ask chizaram perform validation to make the button active
                 MyButton(text: "Continue", onTap: (){
                     Navigator.push(context, MaterialPageRoute(
-                        builder: (context) =>  PinConfirmationPage()));
+                        builder: (context) =>  PinConfirm()));
                 }, 
                 //TODO: change this to the enabled parameter
                 enabled: true)

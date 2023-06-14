@@ -1,16 +1,13 @@
 import 'package:app/size_config.dart';
 import 'package:flutter/material.dart';
 
+import 'Model/Account/AccountDetails.dart';
 import 'components/DetailsContainer.dart';
 
 class AccountDetailsPage extends StatelessWidget {
-  final String fullName;
-  final int tier;
-  final int limit;
-  final String accountNumber;
-  final String bankName;
+  final AccountDetails accountDetails;
 
-  const AccountDetailsPage({super.key, required this.fullName, required this.tier, required this.limit, required this.accountNumber, required this.bankName});
+  const AccountDetailsPage({super.key, required this.accountDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +46,15 @@ class AccountDetailsPage extends StatelessWidget {
               ),
               SizedBox(height: getProportionateScreenHeight(60),),
               //TODO: make sure that value can be copied to clipboard
-              MyDetailsContainer(header: "Account Name", value: fullName),
+              MyDetailsContainer(header: "Account Name", value: accountDetails.fullName!),
               SizedBox(height: getProportionateScreenHeight(46),),
-              MyDetailsContainer(header: "Account Number", value: accountNumber),
+              MyDetailsContainer(header: "Account Number", value: accountDetails.accountNumber!),
               SizedBox(height: getProportionateScreenHeight(46),),
-              MyDetailsContainer(header: "Bank Name", value: bankName),
+              MyDetailsContainer(header: "Bank Name", value: accountDetails.bankName!),
+              SizedBox(height: getProportionateScreenHeight(46),),
+              MyDetailsContainer(header: "Account Tier", value: accountDetails.tier.toString()),
+              SizedBox(height: getProportionateScreenHeight(46),),
+              MyDetailsContainer(header: "Linit", value: accountDetails.limit.toString()),
               SizedBox(height: getProportionateScreenHeight(46),),
             ],
           ),

@@ -1,6 +1,10 @@
+import 'package:app/Model/RequestModel/ChangePasswordRequestModel.dart';
+import 'package:app/Service/Authentication/Authentication.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 
 class ChnagePasswordPage extends StatefulWidget {
   ChnagePasswordPage({super.key});
@@ -13,6 +17,9 @@ class _ChnagePasswordPageState extends State<ChnagePasswordPage> {
   bool isVisible = false;
   bool isVisible1 = false;
   bool isVisible2 = false;
+
+  TextEditingController password = TextEditingController();
+  TextEditingController cPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +92,7 @@ class _ChnagePasswordPageState extends State<ChnagePasswordPage> {
                 ),
                 SizedBox(height:getProportionateScreenHeight(40)),
                 TextFormField(
+                  controller: password,
                   obscureText: !isVisible1,
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
@@ -98,7 +106,7 @@ class _ChnagePasswordPageState extends State<ChnagePasswordPage> {
                         });
                       },
                     ),
-                    labelText: "Password",
+                    labelText: "new Password",
                     labelStyle: TextStyle(color: Color(0xff979797)),
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Color(0xff979797)),
@@ -122,6 +130,7 @@ class _ChnagePasswordPageState extends State<ChnagePasswordPage> {
                 ),
                 SizedBox(height:getProportionateScreenHeight(40)),
                 TextFormField(
+                  controller: cPassword,
                   obscureText: !isVisible2,
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
@@ -135,7 +144,7 @@ class _ChnagePasswordPageState extends State<ChnagePasswordPage> {
                         });
                       },
                     ),
-                    labelText: "Password",
+                    labelText: "Confirm Password",
                     labelStyle: TextStyle(color: Color(0xff979797)),
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Color(0xff979797)),
@@ -158,8 +167,14 @@ class _ChnagePasswordPageState extends State<ChnagePasswordPage> {
                   },
                 ),
                 SizedBox(height:getProportionateScreenHeight(95)),
-                MyButton(text: "Submit", onTap: () {
-                  
+                MyButton(text: "Submit", onTap: () async {
+                  var isReset = await ResetPassword(ChangePasswordRequestModel(password: password.text));
+
+                  if (isReset) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Password Changed Successfully")));
+                    Navigator.pop(context);
+                  }
                 }, enabled: true)
             ]),
           )),
