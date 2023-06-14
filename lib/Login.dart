@@ -10,6 +10,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'ForgotPasswordPage.dart';
+import 'Model/Account/DashboardDetails.dart';
+import 'Service/Authentication/Account.dart';
 import 'Service/Authentication/Authentication.dart';
 import 'SignUp.dart';
 import 'Utility/Utility.dart';
@@ -49,6 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isVisible = false;
   List<CameraDescription>? cameras;
 
+  DashboardDetails? details;
+
+  void getDe() async {
+    details = await GetDashBoard();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     requestPermission();
     getFCMToken();
     initInfo();
+    getDe();
   }
 
   void initialization() async {
@@ -334,8 +343,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) => ButtomNavBar(),
-                          ),
+                            builder: (BuildContext context) {
+                              return ButtomNavBar(details: details);
+                            },),
+                          
                         );
                       }
                     } else {
@@ -389,5 +400,18 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  Future<DashboardDetails?> GetDashBoard() async {
+    if (await hasInternetConnection()) {
+      var dashboardDetails = await GetDashboardDetails();
+      return dashboardDetails;
+      }
+    else {
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No internet connection !')));
+          return null;
+    }
   }
 }

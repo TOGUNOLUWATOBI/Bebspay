@@ -1,10 +1,8 @@
+import 'package:app/PinCofirmationPage.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:pinput/pinput.dart';
 
 class ChangePinPage extends StatefulWidget {
   const ChangePinPage({super.key});
@@ -75,15 +73,7 @@ class _ChangePinPageState extends State<ChangePinPage> {
                 text: "Change Transaction Pin",
                 onTap: () {
                   //TODO: talk to chizaram to implement this part of the screen
-                  
-                  BottomSheet(
-                    onClosing: () {},
-                    builder: (context) {
-
-                      _showModalBottomSheet(context);
-                      return Container();
-                    },
-                  );
+                  _showModalBottomSheet(context);
                 },
                 enabled: true)
           ]))),
@@ -92,54 +82,140 @@ class _ChangePinPageState extends State<ChangePinPage> {
 
   void _showModalBottomSheet(BuildContext context) {
     showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        useRootNavigator: true,
-        isScrollControlled: true,
         context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: true,
         builder: (context) {
           return Container(
-              padding: EdgeInsets.all(getProportionateScreenWidth(22)),
-              decoration: BoxDecoration(
-                color: Color(0xFFD9D9D9),
-                borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(getProportionateScreenWidth(30))),
+            padding: EdgeInsets.only(
+                top: getProportionateScreenHeight(20),
+                left: getProportionateScreenWidth(20),
+                right: getProportionateScreenWidth(20),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              color: Colors.white,
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Center(
+                child: Text(
+                  'Enter PIN',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
               ),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                PinCodeTextField(
-                      appContext: context,
-                      length: 4,
-                      inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      pastedTextStyle: TextStyle(
-                        color: Color(0xFF2D0051),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      obscureText: false,
-                      animationType: AnimationType.fade,
-                      cursorColor: Color(0xFF2D0051),
-                      animationDuration: const Duration(milliseconds: 300),
-                      
-                      pinTheme: PinTheme(
-                        activeColor: Colors.black,
-                        inactiveColor: Colors.black),
-                      keyboardType: TextInputType.number,
-                      
-                      
-                      onChanged: (value) {
-                        debugPrint(value);
-                        setState(() {
-                          value;
-                        });
-                      },
-                      beforeTextPaste: (text) {
-                        debugPrint("Allowing to paste $text");
-                        //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-                        //but you can show anything you want here, like your pop up saying wrong paste format or etc
-                        return true;
-                      },
-                    ),
-              ]));
+              SizedBox(height: getProportionateScreenHeight(5)),
+              Text(
+                'Enter your Transaction PIN below to continue',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: getProportionateScreenHeight(40)),
+
+              /// Transaction PIN Box
+              Center(
+                child: Pinput(
+                  onCompleted: (value) {
+                    setState(() {
+                      _showModalBottomSheet2(context);
+                      //_otpController.text = value;
+                      //print(_otpController.text);
+                    });
+                  },
+                  length: 4,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+
+                  defaultPinTheme: PinTheme(
+                      textStyle: TextStyle(
+                    fontWeight: FontWeight.w400,
+                  )),
+                  // focusedPinTheme: kFocusedPin(context),
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(100)),
+              MyButton(
+                text: 'Continue',
+                onTap: () {
+                  Navigator.pop(context);
+                  _showModalBottomSheet2(context);
+                },
+                enabled: true,
+              ),
+              SizedBox(height: getProportionateScreenHeight(20))
+            ]),
+          );
+        });
+  }
+
+
+  void _showModalBottomSheet2(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: true,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(
+                top: getProportionateScreenHeight(20),
+                left: getProportionateScreenWidth(20),
+                right: getProportionateScreenWidth(20),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              color: Colors.white,
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Center(
+                child: Text(
+                  'Enter PIN',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(5)),
+              Text(
+                'Confirm your Transaction PIN below to continue',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: getProportionateScreenHeight(40)),
+
+              /// Transaction PIN Box
+              Center(
+                child: Pinput(
+                  onCompleted: (value) {
+                    setState(() {
+                      //_otpController.text = value;
+                      //print(_otpController.text);
+                    });
+                  },
+                  length: 4,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+
+                  defaultPinTheme: PinTheme(
+                      textStyle: TextStyle(
+                    fontWeight: FontWeight.w400,
+                  )),
+                  // focusedPinTheme: kFocusedPin(context),
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(100)),
+              MyButton(
+                text: 'Continue',
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                enabled: true,
+              ),
+              SizedBox(height: getProportionateScreenHeight(20))
+            ]),
+          );
         });
   }
 }

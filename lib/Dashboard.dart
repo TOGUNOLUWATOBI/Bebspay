@@ -6,11 +6,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'Model/Account/DashboardDetails.dart';
 import 'Model/Account/TransactionDto.dart';
 import 'Service/Authentication/Account.dart';
 import 'components/BottomNavigationBar.dart';
 
 class Dashboard extends StatefulWidget {
+  DashboardDetails details;
+
+  Dashboard({super.key, required this.details});
   @override
   _Dashboard createState() => _Dashboard();
 }
@@ -19,14 +23,38 @@ class _Dashboard extends State<Dashboard> {
   bool isTransactionAvailable = false;
   bool isLoading = true;
   late List<TransactionDto>? transactions = null;
-  late String firstname ="";
-  late String profilePicture ="";
+  late String firstname = "";
+  late String profilePicture = "";
   late double balance = 0;
+
+  void assignValue() {
+    firstname = widget.details.name!;
+    profilePicture = widget.details.profilePicture!;
+    balance = widget.details.balance!;
+    transactions = widget.details.transactions;
+    isLoading = false;
+  }
+
+  void refresh() async {
+    setState(() {
+      isLoading = true;
+    });
+    var details = await GetDashboardDetails();
+    setState(() {
+      isLoading = false;
+      widget.details = details!;
+      assignValue();
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    GetDashBoard();
+    if (widget.details != null) {
+      refresh();
+    } else {
+      assignValue();
+    }
   }
 
   @override
@@ -47,23 +75,24 @@ class _Dashboard extends State<Dashboard> {
               ),
               Row(
                 children: [
-                  isLoading? CircularProgressIndicator():
-                  CachedNetworkImage(
-                    imageUrl:
-                        //change this url
-                        //'https://drive.google.com/uc?id=1DKW_8cxs0vMyzqNWqhprXMwugI5rZwJl',
-                        'https://drive.google.com/uc?id=$profilePicture',
-                    //TODO: check out how to use placeholders
-                    //placeholder:image(),
-                    
-                    height: getProportionateScreenHeight(70),
-                    width: getProportionateScreenWidth(70),
-                  ),
+                  isLoading
+                      ? CircularProgressIndicator()
+                      : CachedNetworkImage(
+                          imageUrl:
+                              //change this url
+                              //'https://drive.google.com/uc?id=1DKW_8cxs0vMyzqNWqhprXMwugI5rZwJl',
+                              'https://drive.google.com/uc?id=$profilePicture',
+                          //TODO: check out how to use placeholders
+                          //placeholder:image(),
+
+                          height: getProportionateScreenHeight(70),
+                          width: getProportionateScreenWidth(70),
+                        ),
                   SizedBox(
                     width: getProportionateScreenWidth(5),
                   ),
                   //TODO: change the name here
-                  Text(isLoading? "Hi": "Hi $firstname,",
+                  Text(isLoading ? "Hi" : "Hi $firstname,",
                       style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -97,7 +126,7 @@ class _Dashboard extends State<Dashboard> {
                       ),
                       //TODO: change the value here to get the proper balance
                       Text(
-                        isLoading? "": balance.toString(),
+                        isLoading ? "" : balance.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 21,
@@ -118,9 +147,9 @@ class _Dashboard extends State<Dashboard> {
                                   MaterialPageRoute(
                                       //TODO: change the page to the fund wallet page
                                       builder: (context) => FundWalletpage(
-                                            accountNumber: '',
-                                            bankName: '',
-                                            accountName: '',
+                                            accountNumber: widget.details.accountNumber!,
+                                            bankName: widget.details.bank!,
+                                            accountName: widget.details.name! + " " + widget.details.lastname!,
                                           )));
                             },
                             child: Container(
@@ -190,59 +219,21 @@ class _Dashboard extends State<Dashboard> {
               //   height: getProportionateScreenHeight(342),
               //   width: getProportionateScreenWidth(342),
               // ),
-              isLoading ? Image.asset(
-      "assets/images/NoTransaction.png",
-      height: getProportionateScreenHeight(342),
-      width: getProportionateScreenWidth(342),
-    ) : Transaction(context, isTransactionAvailable, transactions),
+              isLoading
+                  ? Image.asset(
+                      "assets/images/NoTransaction.png",
+                      height: getProportionateScreenHeight(342),
+                      width: getProportionateScreenWidth(342),
+                    )
+                  : Transaction(context, isTransactionAvailable, transactions),
             ],
           ),
         )));
-  }
-
-  void GetDashBoard() async {
-    if (await hasInternetConnection()) {
-      var dashboardDetails = await GetDashboardDetails();
-      if (dashboardDetails != null) {
-        //TODO ASK CHIZARAM HOW TO GO ABOUT THIS NULL CHECKER STUFF
-        firstname = dashboardDetails.name!;
-        profilePicture = dashboardDetails.profilePicture!;
-        balance = dashboardDetails.balance!;
-        transactions = dashboardDetails.transactions;
-
-        setState(() {
-          isLoading = false;
-          
-        });
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No internet connection !')));
-    }
   }
 }
 
 Widget Transaction(BuildContext context, bool isTransactionAvailable,
     List<TransactionDto>? transactions) {
-  transactions = [];
-  transactions.add(new TransactionDto(
-    beneficiary: "Test",
-    amount: 1000,
-    postingType: "Cr",
-    creationDate: DateTime.now(),
-  ));
-  transactions.add(new TransactionDto(
-    beneficiary: "Test",
-    amount: 1000,
-    postingType: "Dr",
-    creationDate: DateTime.now(),
-  ));
-  transactions.add(new TransactionDto(
-    beneficiary: "Test",
-    amount: 1000,
-    postingType: "Dr",
-    creationDate: DateTime.now(),
-  ));
   if (isTransactionAvailable == false) {
     return Image.asset(
       "assets/images/NoTransaction.png",
