@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
-class PinConfirmationPage extends StatefulWidget {
-  const PinConfirmationPage({super.key});
+class PinConfirm extends StatefulWidget {
+  const PinConfirm({super.key});
 
   @override
-  State<PinConfirmationPage> createState() => _PinConfirmationPageState();
+  State<PinConfirm> createState() => _PinConfirmState();
 }
 
-class _PinConfirmationPageState extends State<PinConfirmationPage> {
+class _PinConfirmState extends State<PinConfirm> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    
+    return Container();
   }
+
+
 }

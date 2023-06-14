@@ -1,10 +1,7 @@
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:pinput/pinput.dart';
 
 class PanicModePin extends StatefulWidget {
   const PanicModePin({super.key});
@@ -59,7 +56,7 @@ class _PanicModePinState extends State<PanicModePin> {
             //TODO: ask chizaram for help to align this text to the center
             Align(
               child: Text(
-                "Change Your Transaction Pin to protect your transactions ",
+                "Change Your Panic Pin to help protect your account during emergencies ",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
@@ -72,14 +69,153 @@ class _PanicModePinState extends State<PanicModePin> {
               height: getProportionateScreenHeight(200),
             ),
             MyButton(
-                text: "Change Transaction Pin",
+                text: "Change Panic Pin",
                 onTap: () {
                   //TODO: talk to chizaram to implement this part of the screen
-                  
+                  _showModalBottomSheet(context);
                 },
                 enabled: true)
           ]))),
     ));
+  }
+
+  void _showModalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: true,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(
+                top: getProportionateScreenHeight(20),
+                left: getProportionateScreenWidth(20),
+                right: getProportionateScreenWidth(20),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              color: Colors.white,
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Center(
+                child: Text(
+                  'Enter PIN',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(5)),
+              Text(
+                'Enter your Panic PIN below to continue',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: getProportionateScreenHeight(40)),
+
+              /// Transaction PIN Box
+              Center(
+                child: Pinput(
+                  onCompleted: (value) {
+                    setState(() {
+                      _showModalBottomSheet2(context);
+                      //_otpController.text = value;
+                      //print(_otpController.text);
+                    });
+                  },
+                  length: 4,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+
+                  defaultPinTheme: PinTheme(
+                      textStyle: TextStyle(
+                    fontWeight: FontWeight.w400,
+                  )),
+                  // focusedPinTheme: kFocusedPin(context),
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(100)),
+              MyButton(
+                text: 'Continue',
+                onTap: () {
+                  Navigator.pop(context);
+                  _showModalBottomSheet2(context);
+                },
+                enabled: true,
+              ),
+              SizedBox(height: getProportionateScreenHeight(20))
+            ]),
+          );
+        });
+  }
+
+
+  void _showModalBottomSheet2(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: true,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(
+                top: getProportionateScreenHeight(20),
+                left: getProportionateScreenWidth(20),
+                right: getProportionateScreenWidth(20),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              color: Colors.white,
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Center(
+                child: Text(
+                  'Enter PIN',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(5)),
+              Text(
+                'Confirm your Panic PIN below to continue',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: getProportionateScreenHeight(40)),
+
+              /// Transaction PIN Box
+              Center(
+                child: Pinput(
+                  onCompleted: (value) {
+                    setState(() {
+                      //_otpController.text = value;
+                      //print(_otpController.text);
+                    });
+                  },
+                  length: 4,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+
+                  defaultPinTheme: PinTheme(
+                      textStyle: TextStyle(
+                    fontWeight: FontWeight.w400,
+                  )),
+                  // focusedPinTheme: kFocusedPin(context),
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(100)),
+              MyButton(
+                text: 'Continue',
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                enabled: true,
+              ),
+              SizedBox(height: getProportionateScreenHeight(20))
+            ]),
+          );
+        });
   }
 
 }
