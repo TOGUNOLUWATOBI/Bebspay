@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:app/Model/Account/TransactionDto.dart';
 import 'package:app/Model/Account/TransferRequestModel.dart';
 import 'package:app/Model/Account/VerifyAccountUserRequestModel.dart';
@@ -304,7 +306,7 @@ Future<AccountDetails?> GetAccountDetails () async
     if (res.status != "Successful") {
       throw (res);
     } else {
-      var accountDetails = accountDetailsFromJson(res.data);
+      var accountDetails = AccountDetails.fromJson(res.data);
       return accountDetails;
     }
   } catch (e) {
@@ -343,7 +345,7 @@ Future<FundWalletDto?> GetFundWalletDetails () async
 Future<List<Bank>?> GetBanks () async
 {
  String url =
-      "https://localhost:5001/Account/api/v1/banks";
+      "https://fypbackend.azurewebsites.net/Account/api/v1/banks";
   try {
     var response = await http.get(
       Uri.parse(url),
@@ -356,8 +358,9 @@ Future<List<Bank>?> GetBanks () async
     if (res.status != "Successful") {
       throw (res);
     } else {
-      var banks = bankFromJson(res.data);
-      return banks;
+      var banks = List<Bank>.from(res.data.map((x) => Bank.fromJson(x))).toList();
+      print(banks);
+      return banks ;
     }
   } catch (e) {
     print(e);
@@ -369,7 +372,7 @@ Future<List<Bank>?> GetBanks () async
 Future<List<TransactionDto>?> GetTransactions (int count) async
 {
  String url =
-      "https://localhost:5001/Account/api/v1/transactions?count=$count";
+      "https://fypbackend.azurewebsites.net/Account/api/v1/transactions?count=$count";
   try {
     var response = await http.get(
       Uri.parse(url),
@@ -394,7 +397,7 @@ Future<List<TransactionDto>?> GetTransactions (int count) async
 Future<List<BillCategories>?> GetDataBundle (String serviceProvider) async
 {
  String url =
-      "https://localhost:5001/Account/api/v1/GetDataBundles?serviceProvier=$serviceProvider";
+      "https://fypbackend.azurewebsites.net/Account/api/v1/GetDataBundles?serviceProvier=$serviceProvider";
   try {
     var response = await http.get(
       Uri.parse(url),

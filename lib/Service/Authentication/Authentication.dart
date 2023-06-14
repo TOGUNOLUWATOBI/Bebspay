@@ -119,7 +119,7 @@ Future<bool> ResetPassword(ChangePasswordRequestModel model) async {
 
 Future<bool> ForgotPassword(String email) async {
   String url =
-      "https://fypbackend.azurewebsites.net/Authentication/api/v1/VerifyOtp?email=$email";
+      "https://fypbackend.azurewebsites.net/Authentication/api/v1/ForgotPassword?email=$email";
 
   try {
     var response = await http.post(
