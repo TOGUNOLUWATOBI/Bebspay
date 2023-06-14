@@ -9,21 +9,21 @@ ChangePasswordRequestModel changePasswordRequestModelFromJson(String str) => Cha
 String changePasswordRequestModelToJson(ChangePasswordRequestModel data) => json.encode(data.toJson());
 
 class ChangePasswordRequestModel {
-    String email;
+    
     String password;
 
     ChangePasswordRequestModel({
-        required this.email,
+        
         required this.password,
     });
 
     factory ChangePasswordRequestModel.fromJson(Map<String, dynamic> json) => ChangePasswordRequestModel(
-        email: json["Email"],
-        password: json["Password"],
+        
+        password: json["password"],
     );
 
     Map<String, dynamic> toJson() => {
-        "Email": email,
+        
         "Password": password,
     };
 }
