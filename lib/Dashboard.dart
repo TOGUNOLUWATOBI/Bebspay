@@ -1,11 +1,14 @@
 import 'package:app/FundWallet.dart';
+import 'package:app/Utility/Utility.dart';
 import 'package:app/components/TransactionCard.dart';
 import 'package:app/size_config.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'Model/Account/TransactionDto.dart';
-
+import 'Service/Authentication/Account.dart';
+import 'components/BottomNavigationBar.dart';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -13,9 +16,19 @@ class Dashboard extends StatefulWidget {
 }
 
 class _Dashboard extends State<Dashboard> {
-  bool isTransactionAvailable = true;
-  List<TransactionDto>? transactions = [];
-  
+  bool isTransactionAvailable = false;
+  bool isLoading = true;
+  late List<TransactionDto>? transactions = null;
+  late String firstname ="";
+  late String profilePicture ="";
+  late double balance = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    GetDashBoard();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +37,8 @@ class _Dashboard extends State<Dashboard> {
             child: Container(
           padding: EdgeInsets.only(
               left: getProportionateScreenWidth(25),
-              right: getProportionateScreenWidth(25)),
+              right: getProportionateScreenWidth(25),
+              bottom: getProportionateScreenHeight(25)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -33,18 +47,15 @@ class _Dashboard extends State<Dashboard> {
               ),
               Row(
                 children: [
+                  isLoading? CircularProgressIndicator():
                   CachedNetworkImage(
                     imageUrl:
                         //change this url
-                        'https://drive.google.com/uc?id=1DKW_8cxs0vMyzqNWqhprXMwugI5rZwJl',
+                        //'https://drive.google.com/uc?id=1DKW_8cxs0vMyzqNWqhprXMwugI5rZwJl',
+                        'https://drive.google.com/uc?id=$profilePicture',
                     //TODO: check out how to use placeholders
                     //placeholder:image(),
-                    progressIndicatorBuilder: (context, url, progress) =>
-                        Center(
-                      child: CircularProgressIndicator(
-                        value: progress.progress,
-                      ),
-                    ),
+                    
                     height: getProportionateScreenHeight(70),
                     width: getProportionateScreenWidth(70),
                   ),
@@ -52,7 +63,7 @@ class _Dashboard extends State<Dashboard> {
                     width: getProportionateScreenWidth(5),
                   ),
                   //TODO: change the name here
-                  Text("Hi Bebs,",
+                  Text(isLoading? "Hi": "Hi $firstname,",
                       style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -86,7 +97,7 @@ class _Dashboard extends State<Dashboard> {
                       ),
                       //TODO: change the value here to get the proper balance
                       Text(
-                        "5469847755775.52",
+                        balance.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 21,
@@ -105,8 +116,12 @@ class _Dashboard extends State<Dashboard> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    //TODO: change the page to the fund wallet page
-                                      builder: (context) => FundWalletpage(accountNumber: '', bankName: '', accountName: '',)));
+                                      //TODO: change the page to the fund wallet page
+                                      builder: (context) => FundWalletpage(
+                                            accountNumber: '',
+                                            bankName: '',
+                                            accountName: '',
+                                          )));
                             },
                             child: Container(
                               //padding: EdgeInsets.all(40),
@@ -175,66 +190,86 @@ class _Dashboard extends State<Dashboard> {
               //   height: getProportionateScreenHeight(342),
               //   width: getProportionateScreenWidth(342),
               // ),
-              Transaction(context,isTransactionAvailable, transactions),
-              SizedBox(height: getProportionateScreenHeight(55)),
+              Transaction(context, isTransactionAvailable, transactions),
             ],
           ),
         )));
   }
+
+  void GetDashBoard() async {
+    if (await hasInternetConnection()) {
+      var dashboardDetails = await GetDashboardDetails();
+      if (dashboardDetails != null) {
+        //TODO ASK CHIZARAM HOW TO GO ABOUT THIS NULL CHECKER STUFF
+        firstname = dashboardDetails.name!;
+        profilePicture = dashboardDetails.profilePicture!;
+        balance = dashboardDetails.balance!;
+        transactions = dashboardDetails.transactions;
+
+        setState(() {
+          isLoading = false;
+          
+        });
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No internet connection !')));
+    }
+  }
 }
 
-Widget Transaction(BuildContext context,bool isTransactionAvailable, List<TransactionDto>? transactions) {
-  transactions!.add(new TransactionDto(beneficiary: "Test", amount: 1000, postingType: "Dr"));
-  transactions!.add(new TransactionDto(beneficiary: "Test", amount: 1000, postingType: "Dr"));
-  transactions!.add(new TransactionDto(beneficiary: "Test", amount: 1000, postingType: "Dr"));
-  if(isTransactionAvailable == false)
-  {
+Widget Transaction(BuildContext context, bool isTransactionAvailable,
+    List<TransactionDto>? transactions) {
+  transactions = [];
+  transactions.add(new TransactionDto(
+    beneficiary: "Test",
+    amount: 1000,
+    postingType: "Cr",
+    creationDate: DateTime.now(),
+  ));
+  transactions.add(new TransactionDto(
+    beneficiary: "Test",
+    amount: 1000,
+    postingType: "Dr",
+    creationDate: DateTime.now(),
+  ));
+  transactions.add(new TransactionDto(
+    beneficiary: "Test",
+    amount: 1000,
+    postingType: "Dr",
+    creationDate: DateTime.now(),
+  ));
+  if (isTransactionAvailable == false) {
     return Image.asset(
-                "assets/images/NoTransaction.png",
-                height: getProportionateScreenHeight(342),
-                width: getProportionateScreenWidth(342),
-              );
+      "assets/images/NoTransaction.png",
+      height: getProportionateScreenHeight(342),
+      width: getProportionateScreenWidth(342),
+    );
   }
   List<Widget> cards = [];
   for (var transaction in transactions!) {
     bool isdebit = transaction.postingType == "Dr" ? true : false;
-    cards.add(TransactionCard(ticketDescription: transaction.beneficiary, amount: transaction.amount, isDebit: isdebit));
-      
+    var dateTime = transaction.creationDate;
+    cards.add(TransactionCard(
+        ticketDescription: transaction.beneficiary,
+        amount: transaction.amount,
+        isDebit: isdebit,
+        dateCreated: DateFormat.yMd().format(dateTime!),
+        timeCreated: DateFormat.Hms().format(dateTime!)));
   }
 
-//  return SingleChildScrollView(
-//    child: ListView(
-//     children: cards.map((widget) {
-//       return Column(
-//         children: <Widget>[
-//           SizedBox(height: 10),  // Adds 10 pixels of spacing
-//           widget,
-//         ],
-//       );
-//     }).toList(),
-//  ),
-//  );
-
-
- return Container(
-    height: MediaQuery.of(context).size.height,  // Provide a fixed height
+  return Container(
+    // Provide a fixed height
     child: ListView(
+      shrinkWrap: true,
       children: cards.map((widget) {
         return Column(
           children: <Widget>[
-            SizedBox(height: 10),  // Adds 10 pixels of spacing
+            SizedBox(height: 10), // Adds 10 pixels of spacing
             widget,
           ],
         );
       }).toList(),
     ),
   );
-
-  // return Expanded(
-  //   child: SingleChildScrollView(
-  //     child: Column(
-  //       children: cards,
-  //     ),
-  //   ),
-  // );
 }

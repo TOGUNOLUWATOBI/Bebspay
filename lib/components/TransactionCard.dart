@@ -34,14 +34,16 @@ class TransactionCard extends StatelessWidget {
           children: [
             SvgPicture.asset(isDebit! ? "assets/images/DebitIcon.svg" : "assets/images/CreditIcon.svg"),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+             // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  ticketDescription!,
-                  style: TextStyle(
-                          color: Color(0xffA9A5AF),
-                          fontWeight: FontWeight.normal,
-                          fontSize: 18),
+                Align(
+                  child: Text(
+                    ticketDescription!,
+                    style: TextStyle(
+                            color: Color(0xffA9A5AF),
+                            fontWeight: FontWeight.normal,
+                            fontSize: 18),
+                  ),
                 ),
                 Container(
                   padding: EdgeInsets.all(getProportionateScreenWidth(5)),
@@ -74,7 +76,7 @@ class TransactionCard extends StatelessWidget {
             Text(
               isDebit! ? '- $amount' : '+ $amount',
               style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  color: isDebit! ? Color(0xffFF2A52) : Color(0xff17B899), fontSize: 16),
+                  color: isDebit! ? Color(0xffFF2A52) : Color(0xff17B899), fontSize: 16, fontWeight: FontWeight.bold),
             )
           ],
         ),

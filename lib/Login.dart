@@ -65,8 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   initInfo() {
-    var androidInitialize =
-        const AndroidInitializationSettings('logo');
+    var androidInitialize = const AndroidInitializationSettings('logo');
     var iosInitializer = const DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -79,23 +78,13 @@ class _MyHomePageState extends State<MyHomePage> {
     FlutterLocalNotificationsPlugin().initialize(initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse notificationResponse) async {
-              try
-              {
-                if(notificationResponse.payload != null && notificationResponse.payload!.isNotEmpty)
-                {
-
-                }
-                else
-                {
-
-                }
-              }
-              catch(e)
-              {
-
-              }
-              return;
-            });
+      try {
+        if (notificationResponse.payload != null &&
+            notificationResponse.payload!.isNotEmpty) {
+        } else {}
+      } catch (e) {}
+      return;
+    });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print("..................onMessage...................");
@@ -110,16 +99,18 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 
       AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails("dbfood", "dbfood",
-              importance: Importance.high,
-              styleInformation: bigTextStyleInformation,
-              priority: Priority.high,
-              playSound: true,
-              // sound: RawResourceAndroidNotificationSound('notification')
-              );
+          AndroidNotificationDetails(
+        "dbfood", "dbfood",
+        importance: Importance.high,
+        styleInformation: bigTextStyleInformation,
+        priority: Priority.high,
+        playSound: true,
+        // sound: RawResourceAndroidNotificationSound('notification')
+      );
 
-      NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics,iOS: const DarwinNotificationDetails());
+      NotificationDetails platformChannelSpecifics = NotificationDetails(
+          android: androidPlatformChannelSpecifics,
+          iOS: const DarwinNotificationDetails());
 
       await FlutterLocalNotificationsPlugin().show(
           0,
@@ -331,36 +322,30 @@ class _MyHomePageState extends State<MyHomePage> {
                   text: "Sign In",
                   onTap: () async {
                     //TODO: properly do validation
-                    if (!formkey.currentState!.validate()) {
-                      setState(() {
-                        isLoading = true;
-                      });
+                    //if (!formkey.currentState!.validate()) return;
+                    if (await hasInternetConnection()) {
+                      //push to home page OR LOGIN PAGE after creating the account
 
-                      if (await hasInternetConnection()) {
-                        //push to home page OR LOGIN PAGE after creating the account
-
-                        var loginResponseModel = await login(LoginRequestModel(
-                            emailAddress: email.text, password: password.text));
-                        if (loginResponseModel != null) {
-                          storeToken(loginResponseModel.accessToken!);
-                          print(getToken());
-                        }
-                      } else {
-                        setState(() {
-                          isLoading = false;
-                        });
-                        // showErrorSnackBar(
-                        //     "Failed to connect, Check your internet connection",
-                        //     context);
+                      var loginResponseModel = await login(LoginRequestModel(
+                          emailAddress: email.text, password: password.text));
+                      if (loginResponseModel != null) {
+                        storeToken(loginResponseModel.accessToken!);
+                        print(getToken());
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => ButtomNavBar(),
+                          ),
+                        );
                       }
+                    } else {
+                      setState(() {
+                        isLoading = false;
+                      });
+                      // showErrorSnackBar(
+                      //     "Failed to connect, Check your internet connection",
+                      //     context);
                     }
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => ButtomNavBar(),
-                      ),
-                    );
                   },
                   enabled: true,
                 ),

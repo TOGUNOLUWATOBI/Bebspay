@@ -26,7 +26,7 @@ Future<Map<String, String>> createHeader() async {
   // Create the header
   Map<String, String> header = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer $token',
+    'Authorization': 'Bearer ${token!}',
   };
 
   return header;
@@ -39,7 +39,7 @@ Future<bool?> AddPanicPin(AddPanicPinModel model) async {
   try {
     var response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
       body: addPanicPinModelToJson(model),
     );
     print(response.body);
@@ -63,7 +63,7 @@ Future<bool?> ChangePanicPin(ChangePanicPinModel model) async {
   try {
     var response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
       body: changePanicPinModelToJson(model),
     );
     print(response.body);
@@ -88,7 +88,7 @@ Future<bool?> ChangeTransactionPin(ChangeTransactionPinModel model) async {
   try {
     var response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
       body: changeTransactionPinModelToJson(model),
     );
     print(response.body);
@@ -112,7 +112,7 @@ Future<bool?> AddTransactionPin(AddTransactionPinModel model) async {
   try {
     var response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
       body: AddTransactionPinModelToJson(model),
     );
     print(response.body);
@@ -136,7 +136,7 @@ Future<bool?> CheckTransactionPanicPin(CheckTransactionPinModel model) async {
   try {
     var response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
       body: checkTransactionPinModelToJson(model),
     );
     print(response.body);
@@ -161,7 +161,7 @@ Future<TransactionDto?> InitiateTransfer(TransferRequestModel model) async {
   try {
     var response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
       body: transferRequestModelToJson(model),
     );
 
@@ -190,7 +190,7 @@ Future<TransactionDto?> BuyAirtimeData(BuyAirtimeRequestModel model) async {
   try {
     var response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
       body: buyAirtimeRequestModelToJson(model),
     );
 
@@ -243,7 +243,7 @@ Future<VerifyAccountUserResponseModel?> VerifyAccount (VerifyAccountUserRequestM
   try {
     var response = await http.post(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
       body: verifyAccountUserRequestModelToJson(model),      
     );
     print(response.body);
@@ -269,7 +269,7 @@ Future<DashboardDetails?> GetDashboardDetails () async
   try {
     var response = await http.get(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
             
     );
     print(response.body);
@@ -278,7 +278,7 @@ Future<DashboardDetails?> GetDashboardDetails () async
     if (res.status != "Successful") {
       throw (res);
     } else {
-      var dashboardDetails = dashboardDetailsFromJson(res.data);
+      var dashboardDetails = DashboardDetails.fromJson(res.data);
       return dashboardDetails;
     }
   } catch (e) {
@@ -295,7 +295,7 @@ Future<AccountDetails?> GetAccountDetails () async
   try {
     var response = await http.get(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
             
     );
     print(response.body);
@@ -321,7 +321,7 @@ Future<FundWalletDto?> GetFundWalletDetails () async
   try {
     var response = await http.get(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
             
     );
     print(response.body);
@@ -347,7 +347,7 @@ Future<List<Bank>?> GetBanks () async
   try {
     var response = await http.get(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
             
     );
     print(response.body);
@@ -373,7 +373,7 @@ Future<List<TransactionDto>?> GetTransactions (int count) async
   try {
     var response = await http.get(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
             
     );
     print(response.body);
@@ -398,7 +398,7 @@ Future<List<BillCategories>?> GetDataBundle (String serviceProvider) async
   try {
     var response = await http.get(
       Uri.parse(url),
-      headers: headers,
+      headers: await createHeader(),
             
     );
     print(response.body);
