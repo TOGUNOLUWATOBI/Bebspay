@@ -24,11 +24,11 @@ class AccountDetails {
     });
 
     factory AccountDetails.fromJson(Map<String, dynamic> json) => AccountDetails(
-        fullName: json["FullName"],
-        tier: json["Tier"],
-        limit: json["Limit"],
+        fullName: json["fullName"],
+        tier: json["tier"],
+        limit: json["limit"],
         accountNumber: json["accountNumber"],
-        bankName: json["BankName"],
+        bankName: json["bankName"],
     );
 
     Map<String, dynamic> toJson() => {

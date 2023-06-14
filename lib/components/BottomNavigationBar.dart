@@ -10,16 +10,27 @@ import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../Model/Account/DashboardDetails.dart';
+
 class ButtomNavBar extends StatefulWidget {
-  ButtomNavBar({super.key});
+  DashboardDetails? details;
+  ButtomNavBar({super.key, required this.details});
 
   @override
   State<ButtomNavBar> createState() => _ButtomNavBarState();
 }
+// late String firstname = '';
+// late String ProfilePicture= '';
+
+// void assignValue (String firstname, String ProfilePicture)
+//   {
+//     firstname = firstname;
+//     ProfilePicture = ProfilePicture;
+//   }
 
 class _ButtomNavBarState extends State<ButtomNavBar> {
   int selectedIndex = 0;
-
+  
   onTap(index) {
     if (index == 1) {
       _showModalBottomSheet(context);
@@ -30,14 +41,18 @@ class _ButtomNavBarState extends State<ButtomNavBar> {
     }
   }
 
-  final List _children = [
-    Dashboard(),
-    null,
-    MoreScreen(),
-  ];
+  
 
+ 
   @override
   Widget build(BuildContext context) {
+     final List _children = [
+    Dashboard(details: widget.details!,),
+    null,
+    MoreScreen(details: widget.details!,),
+  ];
+
+
     return Scaffold(
       body: _children.elementAt(selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -107,7 +122,7 @@ class _ButtomNavBarState extends State<ButtomNavBar> {
                     Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>  TransferPage()),);
+                        builder: (context) =>  TransferPage(firstName: widget.details?.name!, accountNumeber: widget.details?.accountNumber!, balance: widget.details?.balance!,)),);
                   },
                 ),
                 KDivider(),

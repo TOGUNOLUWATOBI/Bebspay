@@ -1,14 +1,25 @@
+import 'package:app/Utility/Utility.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:app/components/pin_modal_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pinput.dart';
+import 'Model/Account/Banks.dart';
 import 'PinCofirmationPage.dart';
+import 'Service/Authentication/Account.dart';
 import 'components/BalanceContainer.dart';
 
 class TransferPage extends StatefulWidget {
-  const TransferPage({super.key});
+  final String? firstName;
+  final String? accountNumeber;
+  final double? balance;
+
+  const TransferPage(
+      {super.key,
+      required this.firstName,
+      required this.accountNumeber,
+      required this.balance});
 
   @override
   State<TransferPage> createState() => _TransferPageState();
@@ -20,14 +31,24 @@ class _TransferPageState extends State<TransferPage> {
   TextEditingController accountNumber = TextEditingController();
   bool enabled = false;
 
-  String? dropdownValue = "Select One";
+  Bank? dropdownValue;
 
-  List<DropdownMenuItem<String>> get dropdownItems {
-    List<DropdownMenuItem<String>> menuItems = [
-      DropdownMenuItem(child: Text("Male"), value: "Male"),
-      DropdownMenuItem(child: Text("Female"), value: "Female"),
-    ];
-    return menuItems;
+  List<Bank>? dropdownItems = [];
+
+  void populateDropdown() async {
+    if (await hasInternetConnection()) {
+      var banks = await GetBanks();
+
+      setState(() {
+        dropdownItems = banks;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    populateDropdown();
   }
 
   @override
@@ -72,9 +93,9 @@ class _TransferPageState extends State<TransferPage> {
                 ),
                 SizedBox(height: getProportionateScreenHeight(40)),
                 BalanceContainer(
-                    balance: "5430",
-                    firstName: "Bebs",
-                    accountNumber: "1234567890"),
+                    balance: widget.balance!.toString(),
+                    firstName: widget.firstName!,
+                    accountNumber: widget.accountNumeber!),
                 SizedBox(height: getProportionateScreenHeight(31)),
                 TextButton(
                   child: Text(
@@ -92,10 +113,10 @@ class _TransferPageState extends State<TransferPage> {
                       left: getProportionateScreenWidth(27),
                       right: getProportionateScreenWidth(27)),
                   child: TextFormField(
-                    controller: amount,
+                    controller: accountNumber,
                     enableInteractiveSelection: true,
                     decoration: InputDecoration(
-                      labelText: "Enter the amount",
+                      labelText: "Enter the account number",
                       labelStyle: TextStyle(color: Color(0xff979797)),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Color(0xff979797)),
@@ -112,7 +133,7 @@ class _TransferPageState extends State<TransferPage> {
                     validator: (value) {
                       //TODO: ask chizaram how to go about this
                       if (value!.isEmpty) {
-                        return "Please enter the amount";
+                        return "Please enter the account number";
                       }
                       return null;
                     },
@@ -123,25 +144,32 @@ class _TransferPageState extends State<TransferPage> {
                   padding: EdgeInsets.only(
                       left: getProportionateScreenWidth(27),
                       right: getProportionateScreenWidth(27)),
-                  child: DropdownButtonFormField(
-                      decoration: InputDecoration(
-                        enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xff979797))),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xff979797)),
-                        ),
-                        filled: false,
-                        labelText: "Select Bank",
-                        labelStyle: TextStyle(color: Color(0xff979797)),
+                  child: DropdownButtonFormField<Bank>(
+                    decoration: InputDecoration(
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xff979797))),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xff979797)),
                       ),
-                      //dropdownColor: Colors.blueAccent,
-                      //value: dropdownValue,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          dropdownValue = newValue!;
-                        });
-                      },
-                      items: dropdownItems),
+                      filled: false,
+                      labelText: "Select Bank",
+                      labelStyle: TextStyle(color: Color(0xff979797),),
+                    ),
+                    style: TextStyle(fontSize: 12),
+                    //dropdownColor: Colors.blueAccent,
+                    value: dropdownValue,
+                    onChanged: ( newValue) {
+                      setState(() {
+                        dropdownValue = newValue!;
+                      });
+                    },
+                      items: dropdownItems!.map((Bank item) {
+                        return DropdownMenuItem(
+                          value: item,
+                          child: Text(item.bankName!),
+                        );
+                      }).toList(),
+                  ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(41)),
                 Padding(
@@ -149,11 +177,11 @@ class _TransferPageState extends State<TransferPage> {
                       left: getProportionateScreenWidth(27),
                       right: getProportionateScreenWidth(27)),
                   child: TextFormField(
-                    controller: accountNumber,
+                    controller: amount,
                     enableInteractiveSelection: true,
                     decoration: InputDecoration(
                       counter: Offstage(),
-                      labelText: "Enter the Account Number",
+                      labelText: "Enter the amount",
                       labelStyle: TextStyle(color: Color(0xff979797)),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Color(0xff979797)),
@@ -183,7 +211,7 @@ class _TransferPageState extends State<TransferPage> {
                 MyButton(
                     text: "Continue",
                     onTap: () {
-                        _showModalBottomSheet(context);
+                      _showModalBottomSheet(context);
                     },
                     //TODO: change this to the enabled parameter
                     enabled: true)
@@ -199,66 +227,63 @@ class _TransferPageState extends State<TransferPage> {
         isScrollControlled: true,
         isDismissible: true,
         builder: (context) {
-          return 
-            Container(
-              padding: EdgeInsets.only(
-                  top: getProportionateScreenHeight(20),
-                  left: getProportionateScreenWidth(20),
-                  right: getProportionateScreenWidth(20),
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                color: Colors.white,
+          return Container(
+            padding: EdgeInsets.only(
+                top: getProportionateScreenHeight(20),
+                left: getProportionateScreenWidth(20),
+                right: getProportionateScreenWidth(20),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              color: Colors.white,
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Center(
+                child: Text(
+                  'Enter PIN',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
               ),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Center(
-                  child: Text(
-                    'Enter PIN',
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                ),
-                SizedBox(height: getProportionateScreenHeight(5)),
-                Text(
-                  'Enter your Transaction PIN below to continue',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: getProportionateScreenHeight(40)),
+              SizedBox(height: getProportionateScreenHeight(5)),
+              Text(
+                'Enter your Transaction PIN below to continue',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: getProportionateScreenHeight(40)),
 
-                /// Transaction PIN Box
-                Center(
-                  child: Pinput(
-                    onCompleted: (value) {
-                      setState(() {
-                        //_otpController.text = value;
-                        //print(_otpController.text);
-                      });
-                    },
-                    length: 4,
-                    obscureText: true,
-                    textInputAction: TextInputAction.done,
-                    
-                    defaultPinTheme: PinTheme(
+              /// Transaction PIN Box
+              Center(
+                child: Pinput(
+                  onCompleted: (value) {
+                    setState(() {
+                      //_otpController.text = value;
+                      //print(_otpController.text);
+                    });
+                  },
+                  length: 4,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+
+                  defaultPinTheme: PinTheme(
                       textStyle: TextStyle(
-                        fontWeight: FontWeight.w400,
-                      )
-                    ),
-                    // focusedPinTheme: kFocusedPin(context),
-                    
-                  ),
+                    fontWeight: FontWeight.w400,
+                  )),
+                  // focusedPinTheme: kFocusedPin(context),
                 ),
-                SizedBox(height: getProportionateScreenHeight(100)),
-                MyButton(
-                    text: 'Continue',
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    enabled: true,),
-                SizedBox(height: getProportionateScreenHeight(20))
-              ]),
-            
+              ),
+              SizedBox(height: getProportionateScreenHeight(100)),
+              MyButton(
+                text: 'Continue',
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                enabled: true,
+              ),
+              SizedBox(height: getProportionateScreenHeight(20))
+            ]),
           );
         });
   }
