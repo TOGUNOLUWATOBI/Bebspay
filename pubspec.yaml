@@ -71,7 +71,7 @@ flutter_native_splash:
 flutter_icons:
   android: true
   ios: false
-  image_path: "assets/images/Logop.png"
+  image_path: "assets/images/Logopp.png"
 
 dev_dependencies:
   flutter_test:

@@ -97,7 +97,7 @@ class _Dashboard extends State<Dashboard> {
                       ),
                       //TODO: change the value here to get the proper balance
                       Text(
-                        balance.toString(),
+                        isLoading? "": balance.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 21,
@@ -190,7 +190,11 @@ class _Dashboard extends State<Dashboard> {
               //   height: getProportionateScreenHeight(342),
               //   width: getProportionateScreenWidth(342),
               // ),
-              Transaction(context, isTransactionAvailable, transactions),
+              isLoading ? Image.asset(
+      "assets/images/NoTransaction.png",
+      height: getProportionateScreenHeight(342),
+      width: getProportionateScreenWidth(342),
+    ) : Transaction(context, isTransactionAvailable, transactions),
             ],
           ),
         )));
