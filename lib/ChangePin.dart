@@ -128,10 +128,7 @@ class _ChangePinPageState extends State<ChangePinPage> {
                   obscureText: true,
                   textInputAction: TextInputAction.done,
 
-                  defaultPinTheme: PinTheme(
-                      textStyle: TextStyle(
-                    fontWeight: FontWeight.w400,
-                  )),
+                  
                   // focusedPinTheme: kFocusedPin(context),
                 ),
               ),
@@ -198,10 +195,7 @@ class _ChangePinPageState extends State<ChangePinPage> {
                   obscureText: true,
                   textInputAction: TextInputAction.done,
 
-                  defaultPinTheme: PinTheme(
-                      textStyle: TextStyle(
-                    fontWeight: FontWeight.w400,
-                  )),
+                  
                   // focusedPinTheme: kFocusedPin(context),
                 ),
               ),

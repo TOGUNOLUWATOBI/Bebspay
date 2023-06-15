@@ -2,6 +2,7 @@ import 'package:app/Utility/Utility.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:app/components/pin_modal_sheet.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pinput.dart';
@@ -29,6 +30,7 @@ class _TransferPageState extends State<TransferPage> {
   final GlobalKey<FormState> formkey = GlobalKey();
   TextEditingController amount = TextEditingController();
   TextEditingController accountNumber = TextEditingController();
+  TextEditingController pinController = TextEditingController();
   bool enabled = false;
 
   Bank? dropdownValue;
@@ -53,6 +55,14 @@ class _TransferPageState extends State<TransferPage> {
 
   @override
   Widget build(BuildContext context) {
+    if(dropdownItems!.isEmpty)
+    {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
         body: SingleChildScrollView(
             padding: EdgeInsets.only(
@@ -145,6 +155,7 @@ class _TransferPageState extends State<TransferPage> {
                       left: getProportionateScreenWidth(27),
                       right: getProportionateScreenWidth(27)),
                   child: DropdownButtonFormField<Bank>(
+                    
                     decoration: InputDecoration(
                       enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Color(0xff979797))),
@@ -155,10 +166,11 @@ class _TransferPageState extends State<TransferPage> {
                       labelText: "Select Bank",
                       labelStyle: TextStyle(color: Color(0xff979797),),
                     ),
-                    style: TextStyle(fontSize: 12),
+                    
                     //dropdownColor: Colors.blueAccent,
                     value: dropdownValue,
                     onChanged: ( newValue) {
+                      print(newValue!.bankName);
                       setState(() {
                         dropdownValue = newValue!;
                       });
@@ -166,7 +178,9 @@ class _TransferPageState extends State<TransferPage> {
                       items: dropdownItems!.map((Bank item) {
                         return DropdownMenuItem(
                           value: item,
-                          child: Text(item.bankName!),
+                          child: AutoSizeText(item.bankName!,
+                          minFontSize: 6,
+                          maxLines: 1,),
                         );
                       }).toList(),
                   ),
@@ -257,20 +271,18 @@ class _TransferPageState extends State<TransferPage> {
               /// Transaction PIN Box
               Center(
                 child: Pinput(
-                  onCompleted: (value) {
-                    setState(() {
-                      //_otpController.text = value;
-                      //print(_otpController.text);
-                    });
-                  },
+                  controller: pinController,
+                  // onCompleted: (value) {
+                  //   setState(() {
+                  //     //_otpController.text = value;
+                  //     //print(_otpController.text);
+                  //   });
+                  // },
                   length: 4,
+                  
                   obscureText: true,
                   textInputAction: TextInputAction.done,
-
-                  defaultPinTheme: PinTheme(
-                      textStyle: TextStyle(
-                    fontWeight: FontWeight.w400,
-                  )),
+                  
                   // focusedPinTheme: kFocusedPin(context),
                 ),
               ),

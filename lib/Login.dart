@@ -344,6 +344,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           context,
                           MaterialPageRoute(
                             builder: (BuildContext context) {
+                              if(details == null)
+                              {
+                                getDe();
+                              }
                               return ButtomNavBar(details: details);
                             },),
                           
