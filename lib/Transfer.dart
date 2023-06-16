@@ -1,3 +1,5 @@
+import 'package:app/Model/Account/VerifyAccountUserRequestModel.dart';
+import 'package:app/Model/Account/VerifyAccountUserResponseModel.dart';
 import 'package:app/Utility/Utility.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
@@ -32,7 +34,8 @@ class _TransferPageState extends State<TransferPage> {
   TextEditingController accountNumber = TextEditingController();
   TextEditingController pinController = TextEditingController();
   bool enabled = false;
-
+  VerifyAccountUserResponseModel? accountBeneficiary;
+  String? accountName;
   Bank? dropdownValue;
 
   List<Bank>? dropdownItems = [];
@@ -55,8 +58,7 @@ class _TransferPageState extends State<TransferPage> {
 
   @override
   Widget build(BuildContext context) {
-    if(dropdownItems!.isEmpty)
-    {
+    if (dropdownItems!.isEmpty) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -155,7 +157,6 @@ class _TransferPageState extends State<TransferPage> {
                       left: getProportionateScreenWidth(27),
                       right: getProportionateScreenWidth(27)),
                   child: DropdownButtonFormField<Bank>(
-                    
                     decoration: InputDecoration(
                       enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Color(0xff979797))),
@@ -164,58 +165,90 @@ class _TransferPageState extends State<TransferPage> {
                       ),
                       filled: false,
                       labelText: "Select Bank",
-                      labelStyle: TextStyle(color: Color(0xff979797),),
+                      labelStyle: TextStyle(
+                        color: Color(0xff979797),
+                      ),
                     ),
-                    
+                    isExpanded: true,
                     //dropdownColor: Colors.blueAccent,
                     value: dropdownValue,
-                    onChanged: ( newValue) {
-                      print(newValue!.bankName);
+                    onChanged: (newValue) async {
+                      accountBeneficiary = await VerifyAccount(
+                          new VerifyAccountUserRequestModel(
+                              accountNumber: accountNumber.text,
+                              bankName: newValue!.bankName!));
+                      if (accountBeneficiary != null) {
+                        setState(() {
+                          accountName = accountBeneficiary!.accountName;
+                        });
+                      }
                       setState(() {
                         dropdownValue = newValue!;
                       });
                     },
-                      items: dropdownItems!.map((Bank item) {
-                        return DropdownMenuItem(
-                          value: item,
-                          child: AutoSizeText(item.bankName!,
+                    items: dropdownItems!.map((Bank item) {
+                      return DropdownMenuItem(
+                        value: item,
+                        child: AutoSizeText(
+                          item.bankName!,
                           minFontSize: 6,
-                          maxLines: 1,),
-                        );
-                      }).toList(),
+                          maxLines: 1,
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
+                Text(accountName ?? ""),
                 SizedBox(height: getProportionateScreenHeight(41)),
+
                 Padding(
                   padding: EdgeInsets.only(
                       left: getProportionateScreenWidth(27),
                       right: getProportionateScreenWidth(27)),
-                  child: TextFormField(
-                    controller: amount,
-                    enableInteractiveSelection: true,
-                    decoration: InputDecoration(
-                      counter: Offstage(),
-                      labelText: "Enter the amount",
-                      labelStyle: TextStyle(color: Color(0xff979797)),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff979797)),
+                  child: FocusScope(
+                    child: TextFormField(
+                      controller: amount,
+                      enableInteractiveSelection: true,
+                      decoration: InputDecoration(
+                        counter: Offstage(),
+                        labelText: "Enter the amount",
+                        labelStyle: TextStyle(color: Color(0xff979797)),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xff979797)),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xff979797)),
+                        ),
                       ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xff979797)),
-                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
+                      maxLength: 10,
+                      validator: (value) {
+                        //TODO: ask chizaram how to go about this
+                        if (value!.isEmpty) {
+                          return "Please enter the amount";
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    maxLength: 10,
-                    validator: (value) {
-                      //TODO: ask chizaram how to go about this
-                      if (value!.isEmpty) {
-                        return "Please enter the amount";
+                    onFocusChange: (value) {
+                      int? intamount = int.tryParse(amount.text);
+                      if (intamount != null) {
+                        if (accountName == "" ||
+                            accountName == null ||
+                            intamount! < 100) {
+                          setState(() {
+                            enabled = false;
+                          });
+                        } else {
+                          setState(() {
+                            enabled = true;
+                          });
+                        }
                       }
-                      return null;
                     },
                   ),
                 ),
@@ -228,7 +261,7 @@ class _TransferPageState extends State<TransferPage> {
                       _showModalBottomSheet(context);
                     },
                     //TODO: change this to the enabled parameter
-                    enabled: true)
+                    enabled: enabled)
               ]),
             )));
   }
@@ -279,10 +312,10 @@ class _TransferPageState extends State<TransferPage> {
                   //   });
                   // },
                   length: 4,
-                  
+
                   obscureText: true,
                   textInputAction: TextInputAction.done,
-                  
+
                   // focusedPinTheme: kFocusedPin(context),
                 ),
               ),

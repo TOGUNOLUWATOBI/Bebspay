@@ -25,13 +25,13 @@ class VerifyAccountUserResponseModel {
         accountNumber: json["account_number"],
         bankName: json["bank_name"],
         bankCode: json["bank_code"],
-        accountName: json["AccountName"],
+        accountName: json["accountName"],
     );
 
     Map<String, dynamic> toJson() => {
         "account_number": accountNumber,
         "bank_name": bankName,
         "bank_code": bankCode,
-        "AccountName": accountName,
+        "accountName": accountName,
     };
 }

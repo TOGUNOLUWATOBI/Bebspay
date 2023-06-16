@@ -254,7 +254,7 @@ Future<VerifyAccountUserResponseModel?> VerifyAccount (VerifyAccountUserRequestM
     if (res.status != "Successful") {
       throw (res);
     } else {
-      var verifyAccountResponseModel = verifyAccountUserResponseModelFromJson(res.data);
+      var verifyAccountResponseModel = VerifyAccountUserResponseModel.fromJson(res.data);
       return verifyAccountResponseModel;
     }
   } catch (e) {

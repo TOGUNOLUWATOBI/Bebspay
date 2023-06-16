@@ -11,6 +11,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../Model/Account/DashboardDetails.dart';
+import '../Service/Authentication/Account.dart';
+import '../Utility/Utility.dart';
 
 class ButtomNavBar extends StatefulWidget {
   DashboardDetails? details;
@@ -19,14 +21,6 @@ class ButtomNavBar extends StatefulWidget {
   @override
   State<ButtomNavBar> createState() => _ButtomNavBarState();
 }
-// late String firstname = '';
-// late String ProfilePicture= '';
-
-// void assignValue (String firstname, String ProfilePicture)
-//   {
-//     firstname = firstname;
-//     ProfilePicture = ProfilePicture;
-//   }
 
 class _ButtomNavBarState extends State<ButtomNavBar> {
   int selectedIndex = 0;
@@ -41,6 +35,32 @@ class _ButtomNavBarState extends State<ButtomNavBar> {
     }
   }
 
+  void getDetails() async
+  {
+      if(widget.details == null)
+      {
+        widget.details = await GetDashBoard();
+      }
+  }
+
+    Future<DashboardDetails?> GetDashBoard() async {
+    if (await hasInternetConnection()) {
+      var dashboardDetails = await GetDashboardDetails();
+      return dashboardDetails;
+      }
+    else {
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No internet connection !')));
+          return null;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDetails();
+  }
   
 
  
