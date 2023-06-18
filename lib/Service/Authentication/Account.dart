@@ -175,7 +175,7 @@ Future<TransactionDto?> InitiateTransfer(TransferRequestModel model) async {
     if (res.status != "Successful") {
       throw (res);
     } else {
-      TransactionDto transactionDto = transactionDtoFromJson(res.data);
+      TransactionDto transactionDto = TransactionDto.fromJson(res.data);
       return transactionDto;
     }
   } catch (e) {
@@ -228,7 +228,7 @@ Future<double?> GetFeeAmount (int amount) async
     if (res.status != "Successful") {
       throw (res);
     } else {
-      var feeResponseModel = feeResponseModelFromJson(res.data);
+      var feeResponseModel = FeeResponseModel.fromJson(res.data);
       return feeResponseModel.data!.first.fee;      
     }
   } catch (e) {

@@ -201,3 +201,31 @@ Future<String?> getToken() async {
   print(jwt);
   return jwt;
 }
+
+void storeLatitude(String latitude) async {
+  const storage = FlutterSecureStorage();
+  await storage.write(key: 'latitude', value: latitude);
+  
+}
+
+//method to retrieve token received on Login
+Future<String?> getLatitude() async {
+  const storage = FlutterSecureStorage();
+  String? jwt = await storage.read(key: 'latitude');
+  print(jwt);
+  return jwt;
+}
+
+void storeLongitude(String longitude) async {
+  const storage = FlutterSecureStorage();
+  await storage.write(key: 'longitude', value: longitude);
+  
+}
+
+//method to retrieve token received on Login
+Future<String?> getLongitude() async {
+  const storage = FlutterSecureStorage();
+  String? jwt = await storage.read(key: 'longitude');
+  print(jwt);
+  return jwt;
+}

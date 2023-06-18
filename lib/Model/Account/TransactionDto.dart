@@ -9,7 +9,7 @@ TransactionDto transactionDtoFromJson(String str) => TransactionDto.fromJson(jso
 String transactionDtoToJson(TransactionDto data) => json.encode(data.toJson());
 
 class TransactionDto {
-    int? amount;
+    double? amount;
     String? reference;
     String? id;
     DateTime? creationDate;
@@ -38,18 +38,18 @@ class TransactionDto {
     });
 
     factory TransactionDto.fromJson(Map<String, dynamic> json) => TransactionDto(
-        amount: json["Amount"],
-        reference: json["Reference"],
-        id: json["Id"],
-        creationDate: DateTime.tryParse(json["CreationDate"]),
-        postingType: json["PostingType"],
-        transactionType: json["TransactionType"],
-        status: json["Status"],
-        beneficiary: json["Beneficiary"],
-        beneficiaryName: json["BeneficiaryName"],
-        beneficiaryAccountNumber: json["BeneficiaryAccountNumber"],
-        beneficiaryBank: json["BeneficiaryBank"],
-        phoneNumber: json["PhoneNumber"],
+        amount: json["amount"],
+        reference: json["reference"],
+        id: json["id"],
+        creationDate: DateTime.now(),
+        postingType: json["postingType"],
+        transactionType: json["transactionType"],
+        status: json["status"],
+        beneficiary: json["beneficiary"],
+        beneficiaryName: json["beneficiaryName"],
+        beneficiaryAccountNumber: json["beneficiaryAccountNumber"],
+        beneficiaryBank: json["beneficiaryBank"],
+        phoneNumber: json["phoneNumber"],
     );
 
     Map<String, dynamic> toJson() => {

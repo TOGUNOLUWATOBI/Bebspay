@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void getDe() async {
     details = await GetDashBoard();
+    setState(() {});
   }
 
   @override
@@ -334,24 +335,37 @@ class _MyHomePageState extends State<MyHomePage> {
                     //if (!formkey.currentState!.validate()) return;
                     if (await hasInternetConnection()) {
                       //push to home page OR LOGIN PAGE after creating the account
-
+                      setState(() {
+                        isLoading = true;
+                      });
                       var loginResponseModel = await login(LoginRequestModel(
                           emailAddress: email.text, password: password.text));
                       if (loginResponseModel != null) {
                         storeToken(loginResponseModel.accessToken!);
-                        print(getToken());
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              if(details == null)
-                              {
-                                getDe();
-                              }
-                              return ButtomNavBar(details: details);
-                            },),
-                          
-                        );
+                        if (details == null) {
+                          getDe();
+                          if (details != null) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
+                        }
+                        if(details != null)
+                        {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }
+                        if (isLoading == false) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return ButtomNavBar(details: details);
+                              },
+                            ),
+                          );
+                        }
                       }
                     } else {
                       setState(() {
@@ -410,12 +424,10 @@ class _MyHomePageState extends State<MyHomePage> {
     if (await hasInternetConnection()) {
       var dashboardDetails = await GetDashboardDetails();
       return dashboardDetails;
-      }
-    else {
-      
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('No internet connection !')));
-          return null;
+      return null;
     }
   }
 }

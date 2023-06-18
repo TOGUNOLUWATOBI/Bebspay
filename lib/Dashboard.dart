@@ -39,22 +39,21 @@ class _Dashboard extends State<Dashboard> {
     setState(() {
       isLoading = true;
     });
+
     var details = await GetDashboardDetails();
-    setState(() {
-      isLoading = false;
-      widget.details = details!;
-      assignValue();
-    });
+    if (details != null) {
+      setState(() {
+        isLoading = false;
+        widget.details = details!;
+        assignValue();
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    if (widget.details != null) {
-      refresh();
-    } else {
-      assignValue();
-    }
+    refresh();
   }
 
   @override
@@ -147,9 +146,12 @@ class _Dashboard extends State<Dashboard> {
                                   MaterialPageRoute(
                                       //TODO: change the page to the fund wallet page
                                       builder: (context) => FundWalletpage(
-                                            accountNumber: widget.details.accountNumber!,
+                                            accountNumber:
+                                                widget.details.accountNumber!,
                                             bankName: widget.details.bank!,
-                                            accountName: widget.details.name! + " " + widget.details.lastname!,
+                                            accountName: widget.details.name! +
+                                                " " +
+                                                widget.details.lastname!,
                                           )));
                             },
                             child: Container(
@@ -225,7 +227,8 @@ class _Dashboard extends State<Dashboard> {
                       height: getProportionateScreenHeight(342),
                       width: getProportionateScreenWidth(342),
                     )
-                  : Transaction(context, isTransactionAvailable, transactions),
+                  : Transaction(
+                      context, transactions!.isNotEmpty, transactions),
             ],
           ),
         )));

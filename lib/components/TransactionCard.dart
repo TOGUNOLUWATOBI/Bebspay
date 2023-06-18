@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../size_config.dart';
@@ -13,7 +14,7 @@ class TransactionCard extends StatelessWidget {
   });
 
   final String? ticketDescription;
-  final int? amount;
+  final double? amount;
   final String? timeCreated;
   final String? dateCreated;
   final bool? isDebit;
@@ -25,7 +26,7 @@ class TransactionCard extends StatelessWidget {
         //TODO: add navigation to transaction details page
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: getProportionateScreenHeight(10)),
+        padding: EdgeInsets.symmetric(vertical: getProportionateScreenHeight(14)),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: isDebit! ? Color(0xffFF2A52) : Color(0xff17B899))),
@@ -37,12 +38,18 @@ class TransactionCard extends StatelessWidget {
              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Align(
-                  child: Text(
-                    ticketDescription!,
-                    style: TextStyle(
-                            color: Color(0xffA9A5AF),
-                            fontWeight: FontWeight.normal,
-                            fontSize: 18),
+                  child: Container(
+                    width: getProportionateScreenWidth(200),
+                    child: AutoSizeText(
+                      minFontSize: 12,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      ticketDescription!,
+                      style: TextStyle(
+                              color: Color(0xffA9A5AF),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 8),
+                    ),
                   ),
                 ),
                 Container(
@@ -73,6 +80,7 @@ class TransactionCard extends StatelessWidget {
                 )
               ],
             ),
+            
             Text(
               isDebit! ? '- $amount' : '+ $amount',
               style: Theme.of(context).textTheme.displaySmall!.copyWith(

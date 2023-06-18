@@ -1,5 +1,7 @@
+import 'package:app/Model/Account/TransferRequestModel.dart';
 import 'package:app/Model/Account/VerifyAccountUserRequestModel.dart';
 import 'package:app/Model/Account/VerifyAccountUserResponseModel.dart';
+import 'package:app/Service/Authentication/Authentication.dart';
 import 'package:app/Utility/Utility.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
@@ -32,11 +34,14 @@ class _TransferPageState extends State<TransferPage> {
   final GlobalKey<FormState> formkey = GlobalKey();
   TextEditingController amount = TextEditingController();
   TextEditingController accountNumber = TextEditingController();
+  TextEditingController description= TextEditingController();
   TextEditingController pinController = TextEditingController();
   bool enabled = false;
   VerifyAccountUserResponseModel? accountBeneficiary;
   String? accountName;
   Bank? dropdownValue;
+  double? fee;
+  int? intamount;
 
   List<Bank>? dropdownItems = [];
 
@@ -177,14 +182,22 @@ class _TransferPageState extends State<TransferPage> {
                           new VerifyAccountUserRequestModel(
                               accountNumber: accountNumber.text,
                               bankName: newValue!.bankName!));
+                      
+                      setState(() {
+                        dropdownValue = newValue!;
+                      });
+
                       if (accountBeneficiary != null) {
                         setState(() {
                           accountName = accountBeneficiary!.accountName;
                         });
                       }
-                      setState(() {
-                        dropdownValue = newValue!;
-                      });
+                      else
+                      {
+                        setState(() {
+                          accountName ="";
+                        });
+                      }
                     },
                     items: dropdownItems!.map((Bank item) {
                       return DropdownMenuItem(
@@ -234,8 +247,9 @@ class _TransferPageState extends State<TransferPage> {
                         return null;
                       },
                     ),
-                    onFocusChange: (value) {
-                      int? intamount = int.tryParse(amount.text);
+                    //TODO: ask chizaram how to go about this: the button should become enabled once it has a value >=100
+                    onFocusChange: (value) async{
+                      intamount = int.tryParse(amount.text);
                       if (intamount != null) {
                         if (accountName == "" ||
                             accountName == null ||
@@ -243,12 +257,42 @@ class _TransferPageState extends State<TransferPage> {
                           setState(() {
                             enabled = false;
                           });
-                        } else {
-                          setState(() {
+                        } else  {
+                          fee = await GetFeeAmount(intamount!);
+                          setState(()  {
                             enabled = true;
+                            
                           });
                         }
                       }
+                    },
+                  ),
+                ),
+                SizedBox(height: getProportionateScreenHeight(41)),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: getProportionateScreenWidth(27),
+                      right: getProportionateScreenWidth(27)),
+                  child: TextFormField(
+                    controller: description,
+                    enableInteractiveSelection: true,
+                    decoration: InputDecoration(
+                      labelText: "Enter a description",
+                      labelStyle: TextStyle(color: Color(0xff979797)),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xff979797)),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xff979797)),
+                      ),
+                    ),
+                    
+                    validator: (value) {
+                      //TODO: ask chizaram how to go about this
+                      if (value!.isEmpty) {
+                        return "Please enter a description";
+                      }
+                      return null;
                     },
                   ),
                 ),
@@ -257,7 +301,8 @@ class _TransferPageState extends State<TransferPage> {
                 //TODO: ask chizaram perform validation to make the button active
                 MyButton(
                     text: "Continue",
-                    onTap: () {
+                    onTap: () async {
+                      
                       _showModalBottomSheet(context);
                     },
                     //TODO: change this to the enabled parameter
@@ -293,7 +338,7 @@ class _TransferPageState extends State<TransferPage> {
               ),
               SizedBox(height: getProportionateScreenHeight(5)),
               Text(
-                'Enter your Transaction PIN below to continue',
+                'You are about to transfer ${amount.text} to ${accountName} with a fee of $fee ',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!
@@ -322,7 +367,11 @@ class _TransferPageState extends State<TransferPage> {
               SizedBox(height: getProportionateScreenHeight(100)),
               MyButton(
                 text: 'Continue',
-                onTap: () {
+                onTap: () async{
+                  
+                  String? latitude = await getLatitude();
+                  String? longitude = await getLongitude();
+                  InitiateTransfer(new TransferRequestModel(amount: intamount!, trxAmount: (intamount! + fee!), description: description.text, beneficiaryName: accountName!, beneficiaryAccountNumber: accountNumber.text, beneficiaryBank: dropdownValue!.bankName!, beneficiaryBankCode: dropdownValue!.bankCode!, latitude: latitude!, longitude: longitude!));
                   Navigator.pop(context);
                 },
                 enabled: true,

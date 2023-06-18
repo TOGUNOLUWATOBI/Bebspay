@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../Service/Authentication/Authentication.dart';
+
 
 Future<bool> hasInternetConnection() async {
   return await InternetConnectionChecker().hasConnection; 
@@ -43,7 +45,11 @@ Future<Position> determinePosition() async {
 
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.
-  return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+
+  var position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+  storeLongitude(position.longitude.toString());
+  storeLatitude(position.latitude.toString());
+  return position;
 }
 
  Map<String, dynamic> readAndroidBuildData(AndroidDeviceInfo build) {

@@ -10,7 +10,7 @@ String transferRequestModelToJson(TransferRequestModel data) => json.encode(data
 
 class TransferRequestModel {
     int amount;
-    int trxAmount;
+    double trxAmount;
     String description;
     String beneficiaryName;
     String beneficiaryAccountNumber;
@@ -44,13 +44,13 @@ class TransferRequestModel {
     );
 
     Map<String, dynamic> toJson() => {
-        "Amount": amount,
-        "TrxAmount": trxAmount,
-        "Description": description,
-        "BeneficiaryName": beneficiaryName,
-        "BeneficiaryAccountNumber": beneficiaryAccountNumber,
-        "BeneficiaryBank": beneficiaryBank,
-        "BeneficiaryBankCode": beneficiaryBankCode,
+        "amount": amount,
+        "trxAmount": trxAmount,
+        "description": description,
+        "beneficiaryName": beneficiaryName,
+        "beneficiaryAccountNumber": beneficiaryAccountNumber,
+        "beneficiaryBank": beneficiaryBank,
+        "beneficiaryBankCode": beneficiaryBankCode,
         "latitude": latitude,
         "longitude": longitude,
     };
