@@ -2,9 +2,19 @@ import 'package:app/OtpValidationPage.dart';
 import 'package:app/components/my_button.dart';
 import 'package:flutter/material.dart';
 
-class ForgotPasswordPage extends StatelessWidget {
+import 'Service/Authentication/Authentication.dart';
+import 'Utility/Utility.dart';
+
+class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
 
+  @override
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+}
+
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  bool isLoading = false;
+  TextEditingController email = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,20 +25,9 @@ class ForgotPasswordPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   children: [
-
-              //     SizedBox(
-              //       height: 150,
-              //     ),
-              //   ],
-              // ),
               SizedBox(height: 60),
-
               Row(
                 children: [
-                  
                   IconButton(
                     icon: Icon(
                       Icons.arrow_back_ios,
@@ -40,19 +39,18 @@ class ForgotPasswordPage extends StatelessWidget {
                     color: Color(0xff979797),
                   ),
                   Padding(
-                padding: const EdgeInsets.only(left: 15),
-                child: Text(
-                  "Forgot Password",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2D0051)),
-                ),
-              ),
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Text(
+                      "Forgot Password",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2D0051)),
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 40),
-              
               SizedBox(height: 30),
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
@@ -68,6 +66,7 @@ class ForgotPasswordPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: TextFormField(
+                  controller: email,
                   decoration: InputDecoration(
                     labelText: "Email",
                     labelStyle: TextStyle(color: Color(0xff979797)),
@@ -94,13 +93,38 @@ class ForgotPasswordPage extends StatelessWidget {
               SizedBox(
                 height: 70,
               ),
-              MyButton(text: "Submit", onTap: (() {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>  OtpValidation(text: "Check your email for the confirmation code required to reset password",)),
-                  );
-              }),enabled: true,)
+              MyButton(
+                text: "Submit",
+                onTap: (() async {
+                  if (await hasInternetConnection()) {
+                    //push to home page OR LOGIN PAGE after creating the account
+                    setState(() {
+                      isLoading = true;
+                    });
+
+                    var isSent = await ForgotPassword(email.text);
+
+                    if(isSent == false)
+                    {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Email does not exist")));
+                    }
+
+                    if (isSent) {
+                      email.clear();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => OtpValidation(
+                                  text:
+                                      "Check your email for the confirmation code required to reset password",
+                                )),
+                      );
+                    }
+                  }
+                }),
+                enabled: true,
+              )
             ],
           ),
         ),

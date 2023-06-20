@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? mToken = "";
 
   final storage = new FlutterSecureStorage();
-  late bool isLoading = false;
+  bool isLoading = false;
 
   bool isVisible = false;
   List<CameraDescription>? cameras;
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
     requestPermission();
     getFCMToken();
     initInfo();
-    getDe();
+    //getDe();
   }
 
   void initialization() async {
@@ -322,7 +322,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       MaterialPageRoute(
                           builder: (context) => ForgotPasswordPage()),
                     );
-                    print("bbbbbb");
                   },
                 ),
                 SizedBox(
@@ -341,17 +340,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       var loginResponseModel = await login(LoginRequestModel(
                           emailAddress: email.text, password: password.text));
                       if (loginResponseModel != null) {
+                        email.clear();
+                        password.clear();
                         storeToken(loginResponseModel.accessToken!);
                         if (details == null) {
-                          getDe();
-                          if (details != null) {
-                            setState(() {
-                              isLoading = false;
-                            });
-                          }
+                          details = await GetDashboardDetails();
+                        } else if (details != null) {
+                          setState(() {
+                            isLoading = false;
+                          });
                         }
-                        if(details != null)
-                        {
+                        if (details != null) {
                           setState(() {
                             isLoading = false;
                           });
