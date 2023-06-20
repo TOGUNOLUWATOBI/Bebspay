@@ -23,6 +23,17 @@ class _SignUpPageState extends State<SignUpPage> {
   bool isChecked =false;
   String? dropdownValue = "Select One";
 
+  String? selectedState;
+  String? selectedCity;
+
+  TextEditingController firstname = TextEditingController();
+  TextEditingController lastname = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController PhoneNumber = TextEditingController();
+  TextEditingController password = TextEditingController();
+  String gender = "";
+  
+
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
       DropdownMenuItem(child: Text("Select One"), value: "Select One"),
@@ -31,6 +42,233 @@ class _SignUpPageState extends State<SignUpPage> {
     ];
     return menuItems;
   }
+
+  List<NigeriaLocation> nigeriaLocations = [
+    NigeriaLocation(
+      state: 'Abia',
+      cities: ['Aba', 'Arochukwu', 'Umuahia'],
+    ),
+    NigeriaLocation(
+      state: 'Adamawa',
+      cities: ['Jimeta', 'Mubi', 'Numan', 'Yola'],
+    ),
+    NigeriaLocation(
+      state: 'Akwa Ibom',
+      cities: ['Ikot Abasi', 'Ikot Ekpene', 'Oron', 'Uyo'],
+    ),
+    NigeriaLocation(
+      state: 'Anambra',
+      cities: ['Awka', 'Onitsha'],
+    ),
+    NigeriaLocation(
+      state: 'Bauchi',
+      cities: ['Azare', 'Bauchi', 'Jama′are', 'Katagum', 'Misau'],
+    ),
+    NigeriaLocation(
+      state: 'Bayelsa',
+      cities: ['Brass'],
+    ),
+    NigeriaLocation(
+      state: 'Benue',
+      cities: ['Makurdi'],
+    ),
+    NigeriaLocation(
+      state: 'Borno',
+      cities: ['Biu', 'Dikwa', 'Maiduguri'],
+    ),
+    NigeriaLocation(
+      state: 'Cross River',
+      cities: ['Calabar', 'Ogoja'],
+    ),
+    NigeriaLocation(
+      state: 'Delta',
+      cities: ['Asaba', 'Burutu', 'Koko', 'Sapele', 'Ughelli', 'Warri'],
+    ),
+    NigeriaLocation(
+      state: 'Ebonyi',
+      cities: ['Abakaliki'],
+    ),
+    NigeriaLocation(
+      state: 'Edo',
+      cities: ['Benin City'],
+    ),
+    NigeriaLocation(
+      state: 'Ekiti',
+      cities: ['Ado-Ekiti', 'Effon-Alaiye', 'Ikere-Ekiti'],
+    ),
+    NigeriaLocation(
+      state: 'Enugu',
+      cities: ['Enugu', 'Nsukka'],
+    ),
+    NigeriaLocation(
+      state: 'Federal Capital Territory',
+      cities: ['Abuja'],
+    ),
+    NigeriaLocation(
+      state: 'Gombe',
+      cities: ['Deba Habe', 'Gombe', 'Kumo'],
+    ),
+    NigeriaLocation(
+      state: 'Imo',
+      cities: ['Owerri'],
+    ),
+    NigeriaLocation(
+      state: 'Jigawa',
+      cities: ['Birnin Kudu', 'Dutse', 'Gumel', 'Hadejia', 'Kazaure'],
+    ),
+    NigeriaLocation(
+      state: 'Kaduna',
+      cities: ['Jemaa', 'Kaduna', 'Zaria'],
+    ),
+    NigeriaLocation(
+      state: 'Kano',
+      cities: ['Kano'],
+    ),
+    NigeriaLocation(
+      state: 'Katsina',
+      cities: ['Daura', 'Katsina'],
+    ),
+    NigeriaLocation(
+      state: 'Kebbi',
+      cities: ['Argungu', 'Birnin Kebbi', 'Gwandu', 'Yelwa'],
+    ),
+    NigeriaLocation(
+      state: 'Kogi',
+      cities: ['Idah', 'Kabba', 'Lokoja', 'Okene'],
+    ),
+    NigeriaLocation(
+      state: 'Kwara',
+      cities: ['Ilorin', 'Jebba', 'Lafiagi', 'Offa', 'Pategi'],
+    ),
+    NigeriaLocation(
+      state: 'Lagos',
+      cities: [
+        'Badagry',
+        'Epe',
+        'Ikeja',
+        'Ikorodu',
+        'Lagos',
+        'Mushin',
+        'Shomolu',
+        'Lekki',
+        'Ajah'
+      ],
+    ),
+    NigeriaLocation(
+      state: 'Nasarawa',
+      cities: ['Keffi', 'Lafia', 'Nasarawa'],
+    ),
+    NigeriaLocation(
+      state: 'Niger',
+      cities: [
+        'Agaie',
+        'Baro',
+        'Bida',
+        'Kontagora',
+        'Lapai',
+        'Minna',
+        'Suleja'
+      ],
+    ),
+    NigeriaLocation(
+      state: 'Ogun',
+      cities: ['Abeokuta', 'Ijebu-Ode', 'Ilaro', 'Shagamu'],
+    ),
+    NigeriaLocation(
+      state: 'Ondo',
+      cities: ['Akure', 'Ikare', 'Oka-Akoko', 'Ondo', 'Owo'],
+    ),
+    NigeriaLocation(
+      state: 'Osun',
+      cities: [
+        'Ede',
+        'Ikire',
+        'Ikirun',
+        'Ila',
+        'Ile-Ife',
+        'Ilesha',
+        'Ilobu',
+        'Inisa',
+        'Iwo',
+        'Oshogbo'
+      ],
+    ),
+    NigeriaLocation(
+      state: 'Oyo',
+      cities: ['Ibadan', 'Iseyin', 'Ogbomosho', 'Oyo', 'Saki'],
+    ),
+    NigeriaLocation(
+      state: 'Plateau',
+      cities: ['Bukuru', 'Jos', 'Vom', 'Wase'],
+    ),
+    NigeriaLocation(
+      state: 'Rivers',
+      cities: ['Bonny', 'Degema', 'Okrika', 'Port Harcourt'],
+    ),
+    NigeriaLocation(
+      state: 'Sokoto',
+      cities: ['Sokoto'],
+    ),
+    NigeriaLocation(
+      state: 'Taraba',
+      cities: ['Ibi', 'Jalingo', 'Muri'],
+    ),
+    NigeriaLocation(
+      state: 'Yobe',
+      cities: ['Damaturu', 'Nguru'],
+    ),
+    NigeriaLocation(
+      state: 'Zamfara',
+      cities: ['Gusau', 'Kaura Namoda'],
+    ),
+  ];
+
+
+  List<DropdownMenuItem<String>> _buildStateDropdownItems() {
+    List<DropdownMenuItem<String>> items = [];
+    for (var location in nigeriaLocations) {
+      final truncatedText = location.state.length > 7
+          ? '${location.state.substring(0, 7)}...' // Truncate text if longer than 15 characters
+          : location.state;
+
+      items.add(
+        DropdownMenuItem(
+          value: location.state,
+          child: Tooltip(
+            message: location.state,
+            child: Text(truncatedText),
+          ),
+        ),
+      );
+    }
+    return items;
+  }
+
+  List<DropdownMenuItem<String>> _buildCityDropdownItems(String selectedState) {
+    List<DropdownMenuItem<String>> items = [];
+    for (var location in nigeriaLocations) {
+      if (location.state == selectedState) {
+        for (var city in location.cities) {
+          final truncatedText = city.length > 8
+              ? '${city.substring(0, 8)}...' // Truncate text if longer than 15 characters
+              : city;
+
+          items.add(
+            DropdownMenuItem(
+              value: city,
+              child: Tooltip(
+                message: city,
+                child: Text(truncatedText),
+              ),
+            ),
+          );
+        }
+        break;
+      }
+    }
+    return items;
+  }
+
 
   Color getColor(Set<MaterialState> states) {
       Set<MaterialState> interactiveStates = <MaterialState>{
@@ -43,6 +281,8 @@ class _SignUpPageState extends State<SignUpPage> {
       }
       return Colors.transparent;
     }
+ 
+ 
   @override
   Widget build(BuildContext context) {
     
@@ -337,7 +577,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: DropdownButtonFormField(
+                    child: DropdownButtonFormField<String>(
                         decoration: InputDecoration(
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Color(0xff979797))),
@@ -350,18 +590,19 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         //dropdownColor: Colors.blueAccent,
                         //value: dropdownValue,
-                        onChanged: (String? newValue) {
+                        onChanged: (String? value) {
                           setState(() {
-                            dropdownValue = newValue!;
+                            selectedState = value;
+                                selectedCity = null; 
                           });
                         },
-                        items: dropdownItems),
+                        items: _buildStateDropdownItems()),
                   ),
                   SizedBox(
                     width: getProportionateScreenWidth(65),
                   ),
                   Expanded(
-                    child: DropdownButtonFormField(
+                    child: DropdownButtonFormField<String>(
                         decoration: InputDecoration(
                           enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Color(0xff979797))),
@@ -374,12 +615,15 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                         //dropdownColor: Colors.blueAccent,
                         //value: dropdownValue,
+                        items: selectedState != null
+                                ? _buildCityDropdownItems(selectedState!)
+                                : [],
                         onChanged: (String? newValue) {
                           setState(() {
                             dropdownValue = newValue!;
                           });
                         },
-                        items: dropdownItems),
+                    )
                   ),
                 ],
               ),
@@ -455,4 +699,12 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     ));
   }
+}
+
+
+class NigeriaLocation {
+  final String state;
+  final List<String> cities;
+
+  NigeriaLocation({required this.state, required this.cities});
 }
