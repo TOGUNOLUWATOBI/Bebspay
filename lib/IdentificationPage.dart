@@ -1,3 +1,4 @@
+import 'package:app/BVNPage.dart';
 import 'package:app/IdDocumentFirstPage.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
@@ -75,7 +76,7 @@ class IdentificationPage extends StatelessWidget {
                       icon: Icon(Icons.arrow_forward_outlined),
                       onPressed: (() {
                         Navigator.push(context, MaterialPageRoute(
-                        builder: (context) =>  IdDocumentFirstPage(textMessgae: "NIN number",cameras: cameras,)));
+                        builder: (context) =>  IdDocumentFirstPage(textMessgae: "NIN number",cameras: cameras, type: 'NIN',)));
                       })
                     ),
                     
@@ -99,7 +100,10 @@ class IdentificationPage extends StatelessWidget {
                     IconButton(
                       color: Color(0xff979797),
                       icon: Icon(Icons.arrow_forward_outlined),
-                      onPressed: null
+                      onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(
+                        builder: (context) =>  IdDocumentFirstPage(textMessgae: "International Passport Number",cameras: cameras, type: 'Passport',)));
+                      }
                     ),
                     
                   ],
@@ -122,7 +126,10 @@ class IdentificationPage extends StatelessWidget {
                     IconButton(
                       color: Color(0xff979797),
                       icon: Icon(Icons.arrow_forward_outlined),
-                      onPressed: null
+                      onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(
+                        builder: (context) =>  IdDocumentFirstPage(textMessgae: "Drivers License Number",cameras: cameras, type: 'DriversLicensce',)));
+                      }
                     ),
                     
                   ],
@@ -138,7 +145,10 @@ class IdentificationPage extends StatelessWidget {
               ),),
               SizedBox(height: getProportionateScreenHeight(15),),
               GestureDetector(
-                onTap: null,
+                onTap: (){
+                        Navigator.push(context, MaterialPageRoute(
+                        builder: (context) =>  BVNPage(textMessgae: "BVN",cameras: cameras, )));
+                      },
                 child: Text("Click Here",style: TextStyle(color: Color(0xff9766D5),fontWeight: FontWeight.bold,
                   fontSize: 18,
                   fontFamily: "Inter"),),

@@ -116,6 +116,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => OtpValidation(
+                                  isPasswordReset: true,
                                   text:
                                       "Check your email for the confirmation code required to reset password",
                                 )),
