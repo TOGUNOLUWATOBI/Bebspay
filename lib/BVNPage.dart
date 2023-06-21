@@ -1,12 +1,22 @@
 import 'package:app/size_config.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'ScannerPage.dart';
 import 'components/my_button.dart';
 
-class BVNPage extends StatelessWidget {
+class BVNPage extends StatefulWidget {
   String textMessgae;
-  BVNPage({super.key, required this.textMessgae});
+  List<CameraDescription> cameras ;
+  BVNPage({super.key, required this.textMessgae, required this.cameras});
+
+  @override
+  State<BVNPage> createState() => _BVNPageState();
+}
+
+class _BVNPageState extends State<BVNPage> {
+  TextEditingController idNumberController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,8 +73,9 @@ class BVNPage extends StatelessWidget {
                         height: getProportionateScreenHeight(130),
                       ),
                       TextFormField(
+                        controller: idNumberController,
                         decoration: InputDecoration(
-                          labelText: textMessgae,
+                          labelText: widget.textMessgae,
                           labelStyle: TextStyle(color: Color(0xff979797)),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Color(0xff979797)),
@@ -85,11 +96,11 @@ class BVNPage extends StatelessWidget {
                       MyButton(
                           text: "Continue",
                           onTap: (() {
-                            //       Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //       builder: (context) => )
-                            // );
+                           Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>  ScannerPage(cameras: widget.cameras , header: "Liveness Check", IdNumber: idNumberController.text, type: "BVN",)),
+                  );
                           }),
                           enabled: true)
                     ])))));

@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:app/BVNPage.dart';
+
+import 'package:app/DocumentConfirmation.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
@@ -13,9 +14,11 @@ import 'IdentificationPage.dart';
 import 'main.dart';
 
 class CameraScanPage extends StatefulWidget {
-  CameraScanPage({required this.cameras, required this.header});
+  CameraScanPage({required this.cameras, required this.header, required this.IdNumber, required this.type});
   List<CameraDescription> cameras;
   String header;
+  String type;
+  String IdNumber;
   @override
   _CameraScanPage createState() =>
       _CameraScanPage(cameras: cameras, header: header);
@@ -183,7 +186,7 @@ Future initCamera(CameraDescription cameraDescription) async {
                         context,
                         MaterialPageRoute(
                           builder: (BuildContext context) =>
-                              BVNPage(textMessgae: "BVN"),
+                              DocumentConfirmation(Id: widget.IdNumber, imgPath: imagePath, type: widget.type,)
                         ),
                       );
                     } else {
@@ -327,6 +330,10 @@ Future initCamera(CameraDescription cameraDescription) async {
 
       var pic = await cameraController.takePicture();
 
+      setState(() {
+        isCaptured = true;
+      imagePath = pic.path;
+      });
       isCaptured = true;
       imagePath = pic.path;
       // Navigator.push(

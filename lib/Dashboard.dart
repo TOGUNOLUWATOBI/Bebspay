@@ -252,8 +252,8 @@ Widget Transaction(BuildContext context, bool isTransactionAvailable,
         ticketDescription: transaction.beneficiary,
         amount: transaction.amount,
         isDebit: isdebit,
-        dateCreated: DateFormat.yMd().format(dateTime!),
-        timeCreated: DateFormat.Hms().format(dateTime!)));
+        dateCreated: transaction.createdDate,
+        timeCreated: transaction.createdTime));
   }
 
   return Container(
