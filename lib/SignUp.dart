@@ -1,6 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:app/IdentificationPage.dart';
+import 'package:app/Model/Authentication/SignUpRequestModel.dart';
+import 'package:app/OtpValidationPage.dart';
+import 'package:app/Service/Authentication/Authentication.dart';
 import 'package:app/TermsAndConditions.dart';
+import 'package:app/Utility/Utility.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
@@ -10,17 +14,17 @@ import 'package:flutter/services.dart';
 import 'Policy_Dialog.dart';
 
 class SignUpPage extends StatefulWidget {
-  SignUpPage({super.key,required this.cameras});
-  List<CameraDescription> cameras ;
+  SignUpPage({
+    super.key,
+  });
+
   @override
-  State<SignUpPage> createState() => _SignUpPageState(cameras: cameras);
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  _SignUpPageState({required this.cameras});
-  List<CameraDescription> cameras ;
   bool isVisible = false;
-  bool isChecked =false;
+  bool isChecked = false;
   String? dropdownValue = "Select One";
 
   String? selectedState;
@@ -31,8 +35,9 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController email = TextEditingController();
   TextEditingController PhoneNumber = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController confirmPasswrod = TextEditingController();
+  TextEditingController address = TextEditingController();
   String gender = "";
-  
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
@@ -46,183 +51,964 @@ class _SignUpPageState extends State<SignUpPage> {
   List<NigeriaLocation> nigeriaLocations = [
     NigeriaLocation(
       state: 'Abia',
-      cities: ['Aba', 'Arochukwu', 'Umuahia'],
+      cities: [
+        'Aba North',
+        'Aba South',
+        'Arochukwu',
+        'Bende',
+        'Ikwuano',
+        'Isiala Ngwa North',
+        'Isiala Ngwa South',
+        'Isuikwuato',
+        'Obi Ngwa',
+        'Ohafia',
+        'Osisioma Ngwa',
+        'Ugwunagbo',
+        'Ukwa East',
+        'Ukwa West',
+        'Umuahia North',
+        'Umuahia South',
+        'Umu Nneochi'
+      ],
     ),
     NigeriaLocation(
       state: 'Adamawa',
-      cities: ['Jimeta', 'Mubi', 'Numan', 'Yola'],
+      cities: [
+        'Demsa',
+        'Fufore',
+        'Ganye',
+        'Girei',
+        'Gombi',
+        'Guyuk',
+        'Hong',
+        'Jada',
+        'Lamurde',
+        'Madagali',
+        'Maiha',
+        'Mayo-Belwa',
+        'Michika',
+        'Mubi North',
+        'Mubi South',
+        'Numan',
+        'Shelleng',
+        'Song',
+        'Toungo',
+        'Yola North',
+        'Yola South'
+      ],
     ),
     NigeriaLocation(
       state: 'Akwa Ibom',
-      cities: ['Ikot Abasi', 'Ikot Ekpene', 'Oron', 'Uyo'],
+      cities: [
+        'Abak',
+        'Eastern Obolo',
+        'Eket',
+        'Esit Eket',
+        'Essien Udim',
+        'Etim Ekpo',
+        'Etinan',
+        'Ibeno',
+        'Ibesikpo Asutan',
+        'Ibiono Ibom',
+        'Ika',
+        'Ikono',
+        'Ikot Abasi',
+        'Ikot Ekpene',
+        'Ini',
+        'Itu',
+        'Mbo',
+        'Mkpat Enin',
+        'Nsit Atai',
+        'Nsit Ibom',
+        'Nsit Ubium',
+        'Obot Akara',
+        'Okobo',
+        'Onna',
+        'Oron',
+        'Oruk Anam',
+        'Ukanafun',
+        'Udung Uko',
+        'Uruan',
+        'Urue-Offong/Oruko',
+        'Uyo'
+      ],
     ),
     NigeriaLocation(
       state: 'Anambra',
-      cities: ['Awka', 'Onitsha'],
+      cities: [
+        'Aguata',
+        'Anambra East',
+        'Anambra West',
+        'Anaocha',
+        'Awka North',
+        'Awka South',
+        'Ayamelum',
+        'Dunukofia',
+        'Ekwusigo',
+        'Idemili North',
+        'Idemili South',
+        'Ihiala',
+        'Njikoka',
+        'Nnewi North',
+        'Nnewi South',
+        'Ogbaru',
+        'Onitsha North',
+        'Onitsha South',
+        'Orumba North',
+        'Orumba South',
+        'Oyi'
+      ],
     ),
     NigeriaLocation(
       state: 'Bauchi',
-      cities: ['Azare', 'Bauchi', 'Jama′are', 'Katagum', 'Misau'],
+      cities: [
+        'Alkaleri',
+        'Bauchi',
+        'Bogoro',
+        'Damban',
+        'Darazo',
+        'Dass',
+        'Ganjuwa',
+        'Giade',
+        'Itas/Gadau',
+        'Jama’are',
+        'Katagum',
+        'Kirfi',
+        'Misau',
+        'Ningi',
+        'Shira',
+        'Tafawa Balewa',
+        'Toro',
+        'Warji',
+        'Zaki'
+      ],
     ),
     NigeriaLocation(
       state: 'Bayelsa',
-      cities: ['Brass'],
+      cities: [
+        'Brass',
+        'Ekeremor',
+        'Kolokuma/Opokuma',
+        'Nembe',
+        'Ogbia',
+        'Sagbama',
+        'Southern Ijaw',
+        'Yenagoa'
+      ],
     ),
     NigeriaLocation(
       state: 'Benue',
-      cities: ['Makurdi'],
+      cities: [
+        'Ado',
+        'Agatu',
+        'Apa',
+        'Buruku',
+        'Gboko',
+        'Guma',
+        'Gwer East',
+        'Gwer West',
+        'Katsina-Ala',
+        'Konshisha',
+        'Kwande',
+        'Logo',
+        'Makurdi',
+        'Obi',
+        'Ogbadibo',
+        'Ohimini',
+        'Oju',
+        'Okpokwu',
+        'Otukpo',
+        'Tarka',
+        'Ukum',
+        'Ushongo',
+        'Vandeikya'
+      ],
     ),
     NigeriaLocation(
       state: 'Borno',
-      cities: ['Biu', 'Dikwa', 'Maiduguri'],
+      cities: [
+        'Abadam',
+        'Askira/Uba',
+        'Bama',
+        'Bayo',
+        'Biu',
+        'Chibok',
+        'Damboa',
+        'Dikwa',
+        'Gubio',
+        'Guzamala',
+        'Gwoza',
+        'Hawul',
+        'Jere',
+        'Kaga',
+        'Kala/Balge',
+        'Konduga',
+        'Kukawa',
+        'Kwaya Kusar',
+        'Mafa',
+        'Magumeri',
+        'Maiduguri',
+        'Marte',
+        'Mobbar',
+        'Monguno',
+        'Ngala',
+        'Nganzai',
+        'Shani'
+      ],
     ),
     NigeriaLocation(
       state: 'Cross River',
-      cities: ['Calabar', 'Ogoja'],
+      cities: [
+        'Abi',
+        'Akamkpa',
+        'Akpabuyo',
+        'Bakassi',
+        'Bekwarra',
+        'Biase',
+        'Boki',
+        'Calabar Municipal',
+        'Calabar South',
+        'Etung',
+        'Ikom',
+        'Obanliku',
+        'Obubra',
+        'Obudu',
+        'Odukpani',
+        'Ogoja',
+        'Yakuur',
+        'Yala'
+      ],
     ),
     NigeriaLocation(
       state: 'Delta',
-      cities: ['Asaba', 'Burutu', 'Koko', 'Sapele', 'Ughelli', 'Warri'],
+      cities: [
+        'Aniocha North',
+        'Aniocha South',
+        'Bomadi',
+        'Burutu',
+        'Ethiope East',
+        'Ethiope West',
+        'Ika North East',
+        'Ika South',
+        'Isoko North',
+        'Isoko South',
+        'Ndokwa East',
+        'Ndokwa West',
+        'Okpe',
+        'Oshimili North',
+        'Oshimili South',
+        'Patani',
+        'Sapele',
+        'Udu',
+        'Ughelli North',
+        'Ughelli South',
+        'Ukwuani',
+        'Uvwie',
+        'Warri North',
+        'Warri South',
+        'Warri South West'
+      ],
     ),
     NigeriaLocation(
       state: 'Ebonyi',
-      cities: ['Abakaliki'],
+      cities: [
+        'Abakaliki',
+        'Afikpo North',
+        'Afikpo South',
+        'Ebonyi',
+        'Ezza North',
+        'Ezza South',
+        'Ikwo',
+        'Ishielu',
+        'Ivo',
+        'Izzi',
+        'Ohaozara',
+        'Ohaukwu',
+        'Onicha'
+      ],
     ),
     NigeriaLocation(
       state: 'Edo',
-      cities: ['Benin City'],
+      cities: [
+        'Akoko-Edo',
+        'Egor',
+        'Esan Central',
+        'Esan North-East',
+        'Esan South-East',
+        'Esan West',
+        'Etsako Central',
+        'Etsako East',
+        'Etsako West',
+        'Igueben',
+        'Ikpoba-Okha',
+        'Orhionmwon',
+        'Oredo',
+        'Ovia North-East',
+        'Ovia South-West',
+        'Owan East',
+        'Owan West',
+        'Uhunmwonde'
+      ],
     ),
     NigeriaLocation(
       state: 'Ekiti',
-      cities: ['Ado-Ekiti', 'Effon-Alaiye', 'Ikere-Ekiti'],
+      cities: [
+        'Ado Ekiti',
+        'Efon',
+        'Ekiti East',
+        'Ekiti South-West',
+        'Ekiti West',
+        'Emure',
+        'Gbonyin',
+        'Ido Osi',
+        'Ijero',
+        'Ikere',
+        'Ikole',
+        'Ilejemeje',
+        'Irepodun/Ifelodun',
+        'Ise/Orun',
+        'Moba',
+        'Oye'
+      ],
     ),
     NigeriaLocation(
       state: 'Enugu',
-      cities: ['Enugu', 'Nsukka'],
+      cities: [
+        'Aninri',
+        'Awgu',
+        'Enugu East',
+        'Enugu North',
+        'Enugu South',
+        'Ezeagu',
+        'Igbo Etiti',
+        'Igbo Eze North',
+        'Igbo Eze South',
+        'Isi Uzo',
+        'Nkanu East',
+        'Nkanu West',
+        'Nsukka',
+        'Oji River',
+        'Udenu',
+        'Udi',
+        'Uzo Uwani'
+      ],
     ),
     NigeriaLocation(
       state: 'Federal Capital Territory',
-      cities: ['Abuja'],
+      cities: [
+        'Abaji',
+        'Abuja Municipal',
+        'Bwari',
+        'Gwagwalada',
+        'Kuje',
+        'Kwali'
+      ],
     ),
     NigeriaLocation(
       state: 'Gombe',
-      cities: ['Deba Habe', 'Gombe', 'Kumo'],
+      cities: [
+        'Akko',
+        'Balanga',
+        'Billiri',
+        'Dukku',
+        'Funakaye',
+        'Gombe',
+        'Kaltungo',
+        'Kwami',
+        'Nafada',
+        'Shongom',
+        'Yamaltu/Deba'
+      ],
     ),
     NigeriaLocation(
       state: 'Imo',
-      cities: ['Owerri'],
+      cities: [
+        'Aboh Mbaise',
+        'Ahiazu Mbaise',
+        'Ehime Mbano',
+        'Ezinihitte',
+        'Ideato North',
+        'Ideato South',
+        'Ihitte/Uboma',
+        'Ikeduru',
+        'Isiala Mbano',
+        'Isu',
+        'Mbaitoli',
+        'Ngor Okpala',
+        'Njaba',
+        'Nkwerre',
+        'Nwangele',
+        'Obowo',
+        'Oguta',
+        'Ohaji/Egbema',
+        'Okigwe',
+        'Orlu',
+        'Orsu',
+        'Oru East',
+        'Oru West',
+        'Owerri Municipal',
+        'Owerri North',
+        'Owerri West',
+        'Unuimo'
+      ],
     ),
     NigeriaLocation(
       state: 'Jigawa',
-      cities: ['Birnin Kudu', 'Dutse', 'Gumel', 'Hadejia', 'Kazaure'],
+      cities: [
+        'Auyo',
+        'Babura',
+        'Biriniwa',
+        'Birnin Kudu',
+        'Buji',
+        'Dutse',
+        'Gagarawa',
+        'Garki',
+        'Gumel',
+        'Guri',
+        'Gwaram',
+        'Gwiwa',
+        'Hadejia',
+        'Jahun',
+        'Kafin Hausa',
+        'Kaugama',
+        'Kazaure',
+        'Kiri Kasama',
+        'Kiyawa',
+        'Kaugama',
+        'Maigatari',
+        'Malam Madori',
+        'Miga',
+        'Ringim',
+        'Roni',
+        'Sule Tankarkar',
+        'Taura',
+        'Yankwashi'
+      ],
     ),
     NigeriaLocation(
       state: 'Kaduna',
-      cities: ['Jemaa', 'Kaduna', 'Zaria'],
+      cities: [
+        'Birnin Gwari',
+        'Chikun',
+        'Giwa',
+        'Igabi',
+        'Ikara',
+        'Jaba',
+        'Jema’a',
+        'Kachia',
+        'Kaduna North',
+        'Kaduna South',
+        'Kagarko',
+        'Kajuru',
+        'Kaura',
+        'Kauru',
+        'Kubau',
+        'Kudan',
+        'Lere',
+        'Makarfi',
+        'Sabon Gari',
+        'Sanga',
+        'Soba',
+        'Zangon Kataf',
+        'Zaria'
+      ],
     ),
     NigeriaLocation(
       state: 'Kano',
-      cities: ['Kano'],
+      cities: [
+        'Ajingi',
+        'Albasu',
+        'Bagwai',
+        'Bebeji',
+        'Bichi',
+        'Bunkure',
+        'Dala',
+        'Dambatta',
+        'Dawakin Kudu',
+        'Dawakin Tofa',
+        'Doguwa',
+        'Fagge',
+        'Gabasawa',
+        'Garko',
+        'Garun Mallam',
+        'Gaya',
+        'Gezawa',
+        'Gwale',
+        'Gwarzo',
+        'Kabo',
+        'Kano Municipal',
+        'Karaye',
+        'Kibiya',
+        'Kiru',
+        'Kumbotso',
+        'Kunchi',
+        'Kura',
+        'Madobi',
+        'Makoda',
+        'Minjibir',
+        'Nasarawa',
+        'Rano',
+        'Rimin Gado',
+        'Rogo',
+        'Shanono',
+        'Sumaila',
+        'Takai',
+        'Tarauni',
+        'Tofa',
+        'Tsanyawa',
+        'Tudun Wada',
+        'Ungogo',
+        'Warawa',
+        'Wudil'
+      ],
     ),
     NigeriaLocation(
       state: 'Katsina',
-      cities: ['Daura', 'Katsina'],
+      cities: [
+        'Bakori',
+        'Batagarawa',
+        'Batsari',
+        'Baure',
+        'Bindawa',
+        'Charanchi',
+        'Dandume',
+        'Danja',
+        'Dan Musa',
+        'Daura',
+        'Dutsi',
+        'Dutsin Ma',
+        'Faskari',
+        'Funtua',
+        'Ingawa',
+        'Jibia',
+        'Kafur',
+        'Kaita',
+        'Kankara',
+        'Kankia',
+        'Katsina',
+        'Kurfi',
+        'Kusada',
+        'Mai`Adua',
+        'Malumfashi',
+        'Mani',
+        'Mashi',
+        'Matazu',
+        'Musawa',
+        'Rimi',
+        'Sabuwa',
+        'Safana',
+        'Sandamu',
+        'Zango'
+      ],
     ),
     NigeriaLocation(
       state: 'Kebbi',
-      cities: ['Argungu', 'Birnin Kebbi', 'Gwandu', 'Yelwa'],
+      cities: [
+        'Aleiro',
+        'Arewa Dandi',
+        'Argungu',
+        'Augie',
+        'Bagudo',
+        'Birnin Kebbi',
+        'Bunza',
+        'Dandi',
+        'Fakai',
+        'Gwandu',
+        'Jega',
+        'Kalgo',
+        'Koko/Besse',
+        'Maiyama',
+        'Ngaski',
+        'Sakaba',
+        'Shanga',
+        'Suru',
+        'Wasagu/Danko',
+        'Yauri',
+        'Zuru'
+      ],
     ),
     NigeriaLocation(
       state: 'Kogi',
-      cities: ['Idah', 'Kabba', 'Lokoja', 'Okene'],
+      cities: [
+        'Adavi',
+        'Ajaokuta',
+        'Ankpa',
+        'Bassa',
+        'Dekina',
+        'Ibaji',
+        'Idah',
+        'Igalamela Odolu',
+        'Ijumu',
+        'Kabba/Bunu',
+        'Kogi',
+        'Lokoja',
+        'Mopa Muro',
+        'Ofu',
+        'Ogori/Magongo',
+        'Okehi',
+        'Okene',
+        'Olamaboro',
+        'Omala',
+        'Yagba East',
+        'Yagba West'
+      ],
     ),
     NigeriaLocation(
       state: 'Kwara',
-      cities: ['Ilorin', 'Jebba', 'Lafiagi', 'Offa', 'Pategi'],
+      cities: [
+        'Asa',
+        'Baruten',
+        'Edu',
+        'Ekiti',
+        'Ifelodun',
+        'Ilorin East',
+        'Ilorin South',
+        'Ilorin West',
+        'Irepodun',
+        'Isin',
+        'Kaiama',
+        'Moro',
+        'Offa',
+        'Oke Ero',
+        'Oyun',
+        'Pategi'
+      ],
     ),
     NigeriaLocation(
       state: 'Lagos',
       cities: [
+        'Agege',
+        'Ajeromi-Ifelodun',
+        'Alimosho',
+        'Amuwo-Odofin',
+        'Apapa',
         'Badagry',
         'Epe',
+        'Eti Osa',
+        'Ibeju-Lekki',
+        'Ifako-Ijaiye',
         'Ikeja',
         'Ikorodu',
-        'Lagos',
+        'Kosofe',
+        'Lagos Island',
+        'Lagos Mainland',
         'Mushin',
+        'Ojo',
+        'Oshodi-Isolo',
         'Shomolu',
-        'Lekki',
-        'Ajah'
+        'Surulere'
       ],
     ),
     NigeriaLocation(
       state: 'Nasarawa',
-      cities: ['Keffi', 'Lafia', 'Nasarawa'],
+      cities: [
+        'Akwanga',
+        'Awe',
+        'Doma',
+        'Karu',
+        'Keana',
+        'Keffi',
+        'Kokona',
+        'Lafia',
+        'Nasarawa',
+        'Nasarawa Egon',
+        'Obi',
+        'Toto',
+        'Wamba'
+      ],
     ),
     NigeriaLocation(
       state: 'Niger',
       cities: [
         'Agaie',
-        'Baro',
+        'Agwara',
         'Bida',
+        'Borgu',
+        'Bosso',
+        'Chanchaga',
+        'Edati',
+        'Gbako',
+        'Gurara',
+        'Katcha',
         'Kontagora',
         'Lapai',
-        'Minna',
-        'Suleja'
+        'Lavun',
+        'Magama',
+        'Mariga',
+        'Mashegu',
+        'Mokwa',
+        'Muya',
+        'Pailoro',
+        'Rafi',
+        'Rijau',
+        'Shiroro',
+        'Suleja',
+        'Tafa',
+        'Wushishi'
       ],
     ),
     NigeriaLocation(
       state: 'Ogun',
-      cities: ['Abeokuta', 'Ijebu-Ode', 'Ilaro', 'Shagamu'],
+      cities: [
+        'Abeokuta North',
+        'Abeokuta South',
+        'Ado-Odo/Ota',
+        'Ewekoro',
+        'Ifo',
+        'Ijebu East',
+        'Ijebu North',
+        'Ijebu North East',
+        'Ijebu Ode',
+        'Ikenne',
+        'Imeko Afon',
+        'Ipokia',
+        'Obafemi-Owode',
+        'Odeda',
+        'Odogbolu',
+        'Ogun Waterside',
+        'Remo North',
+        'Sagamu',
+        'Yewa North',
+        'Yewa South'
+      ],
     ),
     NigeriaLocation(
       state: 'Ondo',
-      cities: ['Akure', 'Ikare', 'Oka-Akoko', 'Ondo', 'Owo'],
+      cities: [
+        'Akoko North-East',
+        'Akoko North-West',
+        'Akoko South-East',
+        'Akoko South-West',
+        'Akure North',
+        'Akure South',
+        'Ese Odo',
+        'Idanre',
+        'Ifedore',
+        'Ilaje',
+        'Ile Oluji/Okeigbo',
+        'Irele',
+        'Odigbo',
+        'Okitipupa',
+        'Ondo East',
+        'Ondo West',
+        'Ose',
+        'Owo'
+      ],
     ),
     NigeriaLocation(
       state: 'Osun',
       cities: [
-        'Ede',
-        'Ikire',
-        'Ikirun',
+        'Atakunmosa East',
+        'Atakunmosa West',
+        'Aiyedaade',
+        'Aiyedire',
+        'Boluwaduro',
+        'Boripe',
+        'Ede North',
+        'Ede South',
+        'Egbedore',
+        'Ejigbo',
+        'Ife Central',
+        'Ife East',
+        'Ife North',
+        'Ife South',
+        'Ifedayo',
+        'Ifelodun',
         'Ila',
-        'Ile-Ife',
-        'Ilesha',
-        'Ilobu',
-        'Inisa',
+        'Ilesa East',
+        'Ilesa West',
+        'Irepodun',
+        'Irewole',
+        'Isokan',
         'Iwo',
-        'Oshogbo'
+        'Obokun',
+        'Odo Otin',
+        'Ola Oluwa',
+        'Olorunda',
+        'Oriade',
+        'Orolu',
+        'Osogbo'
       ],
     ),
     NigeriaLocation(
       state: 'Oyo',
-      cities: ['Ibadan', 'Iseyin', 'Ogbomosho', 'Oyo', 'Saki'],
+      cities: [
+        'Afijio',
+        'Akinyele',
+        'Atiba',
+        'Atigbo',
+        'Egbeda',
+        'Ibadan North',
+        'Ibadan North-East',
+        'Ibadan North-West',
+        'Ibadan South-East',
+        'Ibadan South-West',
+        'Ibarapa Central',
+        'Ibarapa East',
+        'Ibarapa North',
+        'Ido',
+        'Irepo',
+        'Iseyin',
+        'Itesiwaju',
+        'Iwajowa',
+        'Kajola',
+        'Lagelu',
+        'Ogbomosho North',
+        'Ogbomosho South',
+        'Ogo Oluwa',
+        'Olorunsogo',
+        'Oluyole',
+        'Ona Ara',
+        'Orelope',
+        'Ori Ire',
+        'Oyo East',
+        'Oyo West',
+        'Saki East',
+        'Saki West',
+        'Surulere'
+      ],
     ),
     NigeriaLocation(
       state: 'Plateau',
-      cities: ['Bukuru', 'Jos', 'Vom', 'Wase'],
+      cities: [
+        'Barkin Ladi',
+        'Bassa',
+        'Bokkos',
+        'Jos East',
+        'Jos North',
+        'Jos South',
+        'Kanam',
+        'Kanke',
+        'Langtang North',
+        'Langtang South',
+        'Mangu',
+        'Mikang',
+        'Pankshin',
+        'Qua\'an Pan',
+        'Riyom',
+        'Shendam',
+        'Wase'
+      ],
     ),
     NigeriaLocation(
       state: 'Rivers',
-      cities: ['Bonny', 'Degema', 'Okrika', 'Port Harcourt'],
+      cities: [
+        'Abua/Odual',
+        'Ahoada East',
+        'Ahoada West',
+        'Akuku-Toru',
+        'Andoni',
+        'Asari-Toru',
+        'Bonny',
+        'Degema',
+        'Eleme',
+        'Emohua',
+        'Etche',
+        'Gokana',
+        'Ikwerre',
+        'Khana',
+        'Obio/Akpor',
+        'Ogba/Egbema/Ndoni',
+        'Ogu/Bolo',
+        'Okrika',
+        'Omuma',
+        'Opobo/Nkoro',
+        'Oyigbo',
+        'Port Harcourt',
+        'Tai'
+      ],
     ),
     NigeriaLocation(
       state: 'Sokoto',
-      cities: ['Sokoto'],
+      cities: [
+        'Binji',
+        'Bodinga',
+        'Dange Shuni',
+        'Gada',
+        'Goronyo',
+        'Gudu',
+        'Gwadabawa',
+        'Illela',
+        'Isa',
+        'Kebbe',
+        'Kware',
+        'Rabah',
+        'Sabon Birni',
+        'Shagari',
+        'Silame',
+        'Sokoto North',
+        'Sokoto South',
+        'Tambuwal',
+        'Tangaza',
+        'Tureta',
+        'Wamako',
+        'Wurno',
+        'Yabo'
+      ],
     ),
     NigeriaLocation(
       state: 'Taraba',
-      cities: ['Ibi', 'Jalingo', 'Muri'],
+      cities: [
+        'Ardo Kola',
+        'Bali',
+        'Donga',
+        'Gashaka',
+        'Gassol',
+        'Ibi',
+        'Jalingo',
+        'Karim Lamido',
+        'Kumi',
+        'Lau',
+        'Sardauna',
+        'Takum',
+        'Ussa',
+        'Wukari',
+        'Yorro',
+        'Zing'
+      ],
     ),
     NigeriaLocation(
       state: 'Yobe',
-      cities: ['Damaturu', 'Nguru'],
+      cities: [
+        'Bade',
+        'Bursari',
+        'Damaturu',
+        'Fika',
+        'Fune',
+        'Geidam',
+        'Gujba',
+        'Gulani',
+        'Jakusko',
+        'Karasuwa',
+        'Machina',
+        'Nangere',
+        'Nguru',
+        'Potiskum',
+        'Tarmuwa',
+        'Yunusari',
+        'Yusufari'
+      ],
     ),
     NigeriaLocation(
       state: 'Zamfara',
-      cities: ['Gusau', 'Kaura Namoda'],
+      cities: [
+        'Anka',
+        'Bakura',
+        'Birnin Magaji/Kiyaw',
+        'Bukkuyum',
+        'Bungudu',
+        'Gummi',
+        'Gusau',
+        'Kaura Namoda',
+        'Maradun',
+        'Maru',
+        'Shinkafi',
+        'Talata Mafara',
+        'Chafe',
+        'Zurmi'
+      ],
     ),
   ];
-
 
   List<DropdownMenuItem<String>> _buildStateDropdownItems() {
     List<DropdownMenuItem<String>> items = [];
@@ -269,23 +1055,20 @@ class _SignUpPageState extends State<SignUpPage> {
     return items;
   }
 
-
   Color getColor(Set<MaterialState> states) {
-      Set<MaterialState> interactiveStates = <MaterialState>{
-        MaterialState.pressed,
-        MaterialState.hovered,
-        MaterialState.focused,
-      };
-      if (states.any(interactiveStates.contains)) {
-        return Color(0xFF2D0051);
-      }
-      return Colors.transparent;
+    Set<MaterialState> interactiveStates = <MaterialState>{
+      MaterialState.pressed,
+      MaterialState.hovered,
+      MaterialState.focused,
+    };
+    if (states.any(interactiveStates.contains)) {
+      return Color(0xFF2D0051);
     }
- 
- 
+    return Colors.transparent;
+  }
+
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
         body: SingleChildScrollView(
       child: Container(
@@ -345,6 +1128,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: getProportionateScreenHeight(45),
               ),
               TextFormField(
+                controller: firstname,
                 decoration: InputDecoration(
                   labelText: "Firstname",
                   labelStyle: TextStyle(color: Color(0xff979797)),
@@ -360,6 +1144,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: getProportionateScreenHeight(46),
               ),
               TextFormField(
+                controller: lastname,
                 decoration: InputDecoration(
                   labelText: "Lastname",
                   labelStyle: TextStyle(color: Color(0xff979797)),
@@ -373,6 +1158,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               SizedBox(height: getProportionateScreenHeight(46)),
               TextFormField(
+                controller: email,
                 decoration: InputDecoration(
                   labelText: "Email",
                   labelStyle: TextStyle(color: Color(0xff979797)),
@@ -399,6 +1185,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: getProportionateScreenHeight(46),
               ),
               TextFormField(
+                controller: email,
                 decoration: InputDecoration(
                   labelText: "PhoneNumber",
                   labelStyle: TextStyle(color: Color(0xff979797)),
@@ -420,6 +1207,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: getProportionateScreenHeight(46),
               ),
               TextFormField(
+                controller: password,
                 obscureText: !isVisible,
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
@@ -459,6 +1247,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: getProportionateScreenHeight(46),
               ),
               TextFormField(
+                controller: confirmPasswrod,
                 obscureText: !isVisible,
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
@@ -572,6 +1361,22 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: getProportionateScreenHeight(46),
               ),
+              TextFormField(
+                controller: address,
+                decoration: InputDecoration(
+                  labelText: "Address",
+                  labelStyle: TextStyle(color: Color(0xff979797)),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff979797)),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xff979797)),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: getProportionateScreenHeight(46),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -593,7 +1398,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         onChanged: (String? value) {
                           setState(() {
                             selectedState = value;
-                                selectedCity = null; 
+                            selectedCity = null;
                           });
                         },
                         items: _buildStateDropdownItems()),
@@ -602,29 +1407,28 @@ class _SignUpPageState extends State<SignUpPage> {
                     width: getProportionateScreenWidth(65),
                   ),
                   Expanded(
-                    child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff979797))),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xff979797)),
-                          ),
-                          filled: false,
-                          labelText: "LGA",
-                          labelStyle: TextStyle(color: Color(0xff979797)),
-                        ),
-                        //dropdownColor: Colors.blueAccent,
-                        //value: dropdownValue,
-                        items: selectedState != null
-                                ? _buildCityDropdownItems(selectedState!)
-                                : [],
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            dropdownValue = newValue!;
-                          });
-                        },
-                    )
-                  ),
+                      child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xff979797))),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xff979797)),
+                      ),
+                      filled: false,
+                      labelText: "LGA",
+                      labelStyle: TextStyle(color: Color(0xff979797)),
+                    ),
+                    //dropdownColor: Colors.blueAccent,
+                    //value: dropdownValue,
+                    items: selectedState != null
+                        ? _buildCityDropdownItems(selectedState!)
+                        : [],
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dropdownValue = newValue!;
+                      });
+                    },
+                  )),
                 ],
               ),
 
@@ -641,7 +1445,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       side: BorderSide(
                         color: Theme.of(context).primaryColor,
                         style: BorderStyle.solid,
-                        ),
+                      ),
                       checkColor: Theme.of(context).primaryColor,
                       focusColor: Theme.of(context).primaryColor,
                       hoverColor: Theme.of(context).primaryColor,
@@ -657,42 +1461,67 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   Text(
                     "I agree to the ",
-                    style: TextStyle(
-                      fontSize:16
-                    ),
-                    
+                    style: TextStyle(fontSize: 16),
                   ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       // Navigator.push(context, MaterialPageRoute(
                       //   builder: (context) =>  TermsAndCondtions()));
                       //  TermsAndCondtions();
-                       showModal(
-                      context: context,
-                      configuration: FadeScaleTransitionConfiguration(),
-                      builder: (context) {
-                        return PolicyDialog(
-                          mdFileName: 'TermsCondition.md',
-                        );
-                      },
-                    );
+                      showModal(
+                        context: context,
+                        configuration: FadeScaleTransitionConfiguration(),
+                        builder: (context) {
+                          return PolicyDialog(
+                            mdFileName: 'TermsCondition.md',
+                          );
+                        },
+                      );
                     },
                     child: Text(
-                          "terms and conditons",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff9766D5),
-                              decoration: TextDecoration.underline),
-                        ),
+                      "terms and conditons",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff9766D5),
+                          decoration: TextDecoration.underline),
+                    ),
                   )
                 ],
               ),
-              SizedBox(height: getProportionateScreenHeight(46),),
-              MyButton(text: ("Submit"), onTap: isChecked ? (){
-                Navigator.push(context, MaterialPageRoute(
-                        builder: (context) =>  IdentificationPage(cameras: cameras,)));
-              }:null,enabled: isChecked,)
+              SizedBox(
+                height: getProportionateScreenHeight(46),
+              ),
+              MyButton(
+                text: ("Submit"),
+                onTap: isChecked
+                    ? () async {
+                        if (await hasInternetConnection()) {
+                          var signup = await SignUp(new SignUpRequestModel(
+                              firstname: firstname.text,
+                              lastname: lastname.text,
+                              email: email.text,
+                              password: password.text,
+                              phoneNumber: PhoneNumber.text,
+                              lga: selectedCity!,
+                              address: address.text,
+                              state: selectedState!,
+                              gender: gender));
+                          if (signup != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => OtpValidation(
+                                        text:
+                                            "Check your email for the confirmation code required to Activate your account",
+                                        isPasswordReset: false)));
+                          }
+                        }
+                        
+                      }
+                    : null,
+                enabled: isChecked,
+              )
             ],
           ),
         ),
@@ -700,7 +1529,6 @@ class _SignUpPageState extends State<SignUpPage> {
     ));
   }
 }
-
 
 class NigeriaLocation {
   final String state;

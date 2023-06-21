@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class IdDocumentFirstPage extends StatelessWidget {
+  TextEditingController idNumberController = TextEditingController();
   String textMessgae;
+  String type;
   List<CameraDescription> cameras ;
-  IdDocumentFirstPage({super.key, required this.textMessgae, required this.cameras});
+  IdDocumentFirstPage({super.key, required this.textMessgae, required this.cameras, required this.type});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +68,7 @@ class IdDocumentFirstPage extends StatelessWidget {
                         height: getProportionateScreenHeight(130),
                       ),
                       TextFormField(
+                        controller:  idNumberController,
                         decoration: InputDecoration(
                           labelText: textMessgae,
                           labelStyle: TextStyle(color: Color(0xff979797)),
@@ -87,7 +90,7 @@ class IdDocumentFirstPage extends StatelessWidget {
                         Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>  ScannerPage(cameras: cameras , header: "Liveness Check")),
+                        builder: (context) =>  ScannerPage(cameras: cameras , header: "Liveness Check", IdNumber: idNumberController.text, type: type,)),
                   );
                       }), enabled: true)
                     ])))));
