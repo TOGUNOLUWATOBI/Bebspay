@@ -187,6 +187,45 @@ Future<bool> uploadProfilePic(File imageFile) async {
   }
 }
 
+
+Future<bool> PerformKYC(String email, String type, String idNumber, File file) async {
+ 
+ try{ var request = http.MultipartRequest('POST', Uri.parse('https://fypbackend.azurewebsites.net/Authentication/api/v1/PerformKyc'));
+
+  request.fields['email'] = email;
+  request.fields['DocType'] = type;
+  request.fields['DocNumber'] = idNumber;
+
+
+  var fileStream = http.ByteStream(file.openRead());
+  var fileLength = await file.length();
+
+  var multipartFile = http.MultipartFile(
+    'Selfie',
+    fileStream,
+    fileLength,
+    filename: file.path.split('/').last,
+  );
+
+ request.files.add(multipartFile);
+
+  var resp = await request.send();
+  var response = await http.Response.fromStream(resp);
+  var res = apiResponseFromJson(response.body);
+
+    //var res = json.decode(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      return true;
+    }
+  } catch (e) {
+    print(e);
+    return false;
+  }
+}
+
 //method to store token received on Login
 void storeToken(String token) async {
   const storage = FlutterSecureStorage();
@@ -228,4 +267,18 @@ Future<String?> getLongitude() async {
   String? jwt = await storage.read(key: 'longitude');
   print(jwt);
   return jwt;
+}
+
+void storeEmail(String email) async {
+  const storage = FlutterSecureStorage();
+  await storage.write(key: 'email', value: email);
+  
+}
+
+//method to retrieve token received on Login
+Future<String?> getEmail() async {
+  const storage = FlutterSecureStorage();
+  String? email = await storage.read(key: 'email');
+  print(email);
+  return email;
 }

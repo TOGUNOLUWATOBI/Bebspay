@@ -9,6 +9,7 @@ class LoginResponseModel {
     String? accessToken;
     String? tokenType;
     DateTime? expiresIn;
+    bool? isKycComplete;
 
     LoginResponseModel({this.email, this.accessToken, this.tokenType, this.expiresIn}); 
 
@@ -17,6 +18,7 @@ class LoginResponseModel {
         accessToken = json['accessToken'];
         tokenType = json['tokenType'];
         expiresIn = DateTime.tryParse(json['expiresIn']);
+        isKycComplete = json['isKycComplete'];
     }
 
     Map<String, dynamic> toJson() {
@@ -25,6 +27,7 @@ class LoginResponseModel {
         data['accessToken'] = accessToken;
         data['tokenType'] = tokenType;
         data['expiresIn'] = expiresIn;
+        data['isKycComplete'] = isKycComplete;
         return data;
     }
 }

@@ -21,6 +21,8 @@ class TransactionDto {
     String? beneficiaryAccountNumber;
     String? beneficiaryBank;
     String? phoneNumber;
+    String? createdDate;
+    String? createdTime;
 
     TransactionDto({
          this.amount,
@@ -35,6 +37,8 @@ class TransactionDto {
          this.beneficiaryAccountNumber,
          this.beneficiaryBank,
          this.phoneNumber,
+         this.createdDate,
+         this.createdTime
     });
 
     factory TransactionDto.fromJson(Map<String, dynamic> json) => TransactionDto(
@@ -50,6 +54,8 @@ class TransactionDto {
         beneficiaryAccountNumber: json["beneficiaryAccountNumber"],
         beneficiaryBank: json["beneficiaryBank"],
         phoneNumber: json["phoneNumber"],
+        createdDate: json["createdDate"],
+        createdTime: json["createdTime"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -65,5 +71,7 @@ class TransactionDto {
         "BeneficiaryAccountNumber": beneficiaryAccountNumber,
         "BeneficiaryBank": beneficiaryBank,
         "PhoneNumber": phoneNumber,
+        "CreatedDate": createdDate,
+        "CreatedTime": createdTime
     };
 }
