@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app/IdentificationPage.dart';
 import 'package:app/Model/Authentication/LoginRequestModel.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
@@ -239,6 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: getProportionateScreenHeight(101),
                 ),
                 TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   controller: email,
                   enableInteractiveSelection: true,
                   decoration: InputDecoration(
@@ -268,6 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: getProportionateScreenHeight(44),
                 ),
                 TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   controller: password,
                   enableInteractiveSelection: true,
                   obscureText: !isVisible,
@@ -331,7 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   text: "Sign In",
                   onTap: () async {
                     //TODO: properly do validation
-                    //if (!formkey.currentState!.validate()) return;
+                    if (!formkey.currentState!.validate()) return;
                     if (await hasInternetConnection()) {
                       //push to home page OR LOGIN PAGE after creating the account
                       setState(() {
@@ -340,9 +343,21 @@ class _MyHomePageState extends State<MyHomePage> {
                       var loginResponseModel = await login(LoginRequestModel(
                           emailAddress: email.text, password: password.text));
                       if (loginResponseModel != null) {
+                        storeEmail(email.text);
                         email.clear();
                         password.clear();
                         storeToken(loginResponseModel.accessToken!);
+                        if(!loginResponseModel.isKycComplete!)
+                        {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return IdentificationPage(cameras: cameras!,);
+                              },
+                            ),
+                          );
+                        }
                         if (details == null) {
                           details = await GetDashboardDetails();
                         } else if (details != null) {
@@ -404,7 +419,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => SignUpPage(
-                                    cameras: cameras!,
+                                    
                                   )),
                         );
                       },

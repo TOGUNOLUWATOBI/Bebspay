@@ -1,18 +1,22 @@
 import 'dart:async';
 
+import 'package:app/IdentificationPage.dart';
 import 'package:app/PasswordResetpage.dart';
 import 'package:app/Service/Authentication/Authentication.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
+import 'Login.dart';
 import 'Utility/Utility.dart';
 
 class OtpValidation extends StatefulWidget {
-  OtpValidation({super.key, required this.text});
+  OtpValidation({super.key, required this.text, required this.isPasswordReset});
   String text;
+  bool isPasswordReset;
 
   @override
   State<OtpValidation> createState() => _OtpValidationPageState(text: text);
@@ -20,7 +24,7 @@ class OtpValidation extends StatefulWidget {
 
 class _OtpValidationPageState extends State<OtpValidation> {
   _OtpValidationPageState({required this.text});
-
+  List<CameraDescription>? cameras;
   bool isButtonDisabled = true;
   bool isLoading = false;
   String otpCode = "";
@@ -31,10 +35,15 @@ class _OtpValidationPageState extends State<OtpValidation> {
   @override
   void initState() {
     super.initState();
+    initialization();
     startTimer();
     if (myDuration == 0) {
       color = Color(0xff9766D5);
     }
+  }
+
+  void initialization() async {
+    cameras = await availableCameras();
   }
 
   @override
@@ -229,17 +238,64 @@ class _OtpValidationPageState extends State<OtpValidation> {
                       }
 
                       if (isSent) {
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                            //TODO: change the message here
-                            builder: (context) {
-                          return passwordResetPage();
-                        }), (r) {
-                          return false;
-                        });
+                        if (widget.isPasswordReset) {
+                          Navigator.pushAndRemoveUntil(context,
+                              MaterialPageRoute(
+                                  //TODO: change the message here
+                                  builder: (context) {
+                            return MyHomePage(
+                              title: "Bebspay",
+                            );
+                          }), (r) {
+                            return false;
+                          });
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => passwordResetPage()),
+                          );
+                        } else {
+                          Navigator.pushAndRemoveUntil(context,
+                              MaterialPageRoute(
+                                  //TODO: change the message here
+                                  builder: (context) {
+                            return MyHomePage(
+                              title: "Bebspay",
+                            );
+                          }), (r) {
+                            return false;
+                          });
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                //TODO: change the message here
+                                builder: (context) {
+                              return IdentificationPage(cameras: cameras!);
+                            }),
+                          );
+                        }
                       }
                     }
+                    // Navigator.pushAndRemoveUntil(context,
+                    //           MaterialPageRoute(
+                    //               //TODO: change the message here
+                    //               builder: (context) {
+                    //         return MyHomePage(
+                    //           title: "Bebspay",
+                    //         );
+                    //       }), (r) {
+                    //         return false;
+                    //       });
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             //TODO: change the message here
+                    //             builder: (context) {
+                    //           return IdentificationPage(cameras: cameras!);
+                    //         }),
+                    //       );
                   },
-                  enabled: isEnabled,
+                  enabled: true,
                 )
               ]))),
     ));
