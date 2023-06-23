@@ -134,6 +134,7 @@ class _MoreScreenState extends State<MoreScreen> {
                 SizedBox(
                   height: getProportionateScreenHeight(117),
                 ),
+                //TODO: check how to do logout
                 MyButton(text: 'logout', onTap: () {}, enabled: true)
               ]),
             )),

@@ -44,7 +44,7 @@ class CompletePage extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            //TODO: change the message here
+                            //TODO: change the message here and class
                             builder: (context) => MyApp()
                         ),
                         (r)

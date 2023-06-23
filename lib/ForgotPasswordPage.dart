@@ -122,6 +122,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 )),
                       );
                     }
+                    setState(() {
+                      isLoading = false;
+                    });
                   }
                 }),
                 enabled: true,

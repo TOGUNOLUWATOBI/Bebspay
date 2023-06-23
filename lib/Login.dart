@@ -330,68 +330,78 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: getProportionateScreenHeight(88),
                 ),
-                MyButton(
-                  text: "Sign In",
-                  onTap: () async {
-                    //TODO: properly do validation
-                    if (!formkey.currentState!.validate()) return;
-                    if (await hasInternetConnection()) {
-                      //push to home page OR LOGIN PAGE after creating the account
-                      setState(() {
-                        isLoading = true;
-                      });
-                      var loginResponseModel = await login(LoginRequestModel(
-                          emailAddress: email.text, password: password.text));
-                      if (loginResponseModel != null) {
-                        storeEmail(email.text);
-                        email.clear();
-                        password.clear();
-                        storeToken(loginResponseModel.accessToken!);
-                        if(!loginResponseModel.isKycComplete!)
-                        {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                return IdentificationPage(cameras: cameras!,);
-                              },
-                            ),
-                          );
-                        }
-                        if (details == null) {
-                          details = await GetDashboardDetails();
-                        } else if (details != null) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }
-                        if (details != null) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }
-                        if (isLoading == false) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                return ButtomNavBar(details: details);
-                              },
-                            ),
-                          );
-                        }
-                      }
-                    } else {
-                      setState(() {
-                        isLoading = false;
-                      });
-                      // showErrorSnackBar(
-                      //     "Failed to connect, Check your internet connection",
-                      //     context);
-                    }
-                  },
-                  enabled: true,
-                ),
+                isLoading
+                    ? MyLoadingButton()
+                    : MyButton(
+                        text: "Sign In",
+                        onTap: () async {
+                          //TODO: properly do validation
+                          if (!formkey.currentState!.validate()) return;
+                          if (await hasInternetConnection()) {
+                            //push to home page OR LOGIN PAGE after creating the account
+                            setState(() {
+                              isLoading = true;
+                            });
+                            var loginResponseModel = await login(
+                                LoginRequestModel(
+                                    emailAddress: email.text,
+                                    password: password.text));
+                            if (loginResponseModel != null) {
+                              storeEmail(email.text);
+
+                              storeToken(loginResponseModel.accessToken!);
+                              if (!loginResponseModel.isKycComplete!) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return IdentificationPage(
+                                        cameras: cameras!,
+                                      );
+                                    },
+                                  ),
+                                );
+                              }
+                              if (details == null) {
+                                details = await GetDashboardDetails();
+                              } else if (details != null) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              }
+                              if (details != null) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              }
+                              if (isLoading == false) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return ButtomNavBar(details: details);
+                                    },
+                                  ),
+                                );
+                              }
+                            }
+                          } else {
+                            setState(() {
+                              isLoading = false;
+                            });
+                            // showErrorSnackBar(
+                            //     "Failed to connect, Check your internet connection",
+                            //     context);
+                          }
+
+                          email.clear();
+                          password.clear();
+                        },
+                        enabled: true,
+                      ),
                 SizedBox(
                   height: getProportionateScreenHeight(140),
                 ),
@@ -417,10 +427,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => SignUpPage(
-                                    
-                                  )),
+                          MaterialPageRoute(builder: (context) => SignUpPage()),
                         );
                       },
                     ),
