@@ -16,6 +16,7 @@ class passwordResetPage extends StatefulWidget {
 
 class _passwordResetPage extends State<passwordResetPage> {
   bool isVisible = false;
+  bool isLoading = false;
   TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -136,10 +137,14 @@ class _passwordResetPage extends State<passwordResetPage> {
               SizedBox(
                 height: getProportionateScreenHeight(158),
               ),
+              isLoading ? MyLoadingButton() :
               MyButton(
                 text: "Submit",
                 onTap: () async {
                   if (await hasInternetConnection()) {
+                    setState(() {
+                      isLoading = true;
+                    });
                     var isReset = await ResetPassword(
                         ChangePasswordRequestModel(password: password.text));
 
@@ -159,6 +164,9 @@ class _passwordResetPage extends State<passwordResetPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("No Internet Connection")));
                   }
+                  setState(() {
+                    isLoading= false;
+                  });
                 },
                 enabled: true,
               )

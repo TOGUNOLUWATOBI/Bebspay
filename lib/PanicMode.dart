@@ -1,7 +1,12 @@
+import 'package:app/Model/RequestModel/ChangePanicPinModel.dart';
+import 'package:app/Service/Authentication/Account.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+
+import 'Model/RequestModel/CheckTransactionPinModel.dart';
+import 'Utility/Utility.dart';
 
 class PanicModePin extends StatefulWidget {
   const PanicModePin({super.key});
@@ -11,6 +16,11 @@ class PanicModePin extends StatefulWidget {
 }
 
 class _PanicModePinState extends State<PanicModePin> {
+  bool isLoading = false;
+  String pin1 = "";
+  String pin0 = "";
+  String pin2 = "";
+  bool enabled = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +66,7 @@ class _PanicModePinState extends State<PanicModePin> {
             //TODO: ask chizaram for help to align this text to the center
             Align(
               child: Text(
-                "Change Your Panic Pin to help protect your account during emergencies ",
+                "Change Your Panic Pin to protect your account during emergency ",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
@@ -105,7 +115,7 @@ class _PanicModePinState extends State<PanicModePin> {
               ),
               SizedBox(height: getProportionateScreenHeight(5)),
               Text(
-                'Enter your Panic PIN below to continue',
+                'Enter your old Panic PIN below to continue',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!
@@ -113,13 +123,13 @@ class _PanicModePinState extends State<PanicModePin> {
               ),
               SizedBox(height: getProportionateScreenHeight(40)),
 
-              /// Transaction PIN Box
+              /// Panic PIN Box
               Center(
                 child: Pinput(
                   onCompleted: (value) {
                     setState(() {
                       _showModalBottomSheet2(context);
-                      //_otpController.text = value;
+                      pin0 = value;
                       //print(_otpController.text);
                     });
                   },
@@ -127,7 +137,78 @@ class _PanicModePinState extends State<PanicModePin> {
                   obscureText: true,
                   textInputAction: TextInputAction.done,
 
-                  
+                  // focusedPinTheme: kFocusedPin(context),
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(100)),
+              MyButton(
+                text: 'Continue',
+                onTap: () async {
+                  if (await hasInternetConnection()) {
+                    var isvalidpin = await CheckTransactionPanicPin(
+                        new CheckTransactionPinModel(trxPin: pin0));
+                    if (isvalidpin!) {
+                      Navigator.pop(context);
+                      _showModalBottomSheet1(context);
+                    }
+                  }
+                },
+                enabled: true,
+              ),
+              SizedBox(height: getProportionateScreenHeight(20))
+            ]),
+          );
+        });
+  }
+
+  void _showModalBottomSheet1(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: true,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(
+                top: getProportionateScreenHeight(20),
+                left: getProportionateScreenWidth(20),
+                right: getProportionateScreenWidth(20),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              color: Colors.white,
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Center(
+                child: Text(
+                  'Enter PIN',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(5)),
+              Text(
+                'Enter your new Panic PIN below to continue',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: getProportionateScreenHeight(40)),
+
+              /// Panic PIN Box
+              Center(
+                child: Pinput(
+                  onCompleted: (value) {
+                    setState(() {
+                      _showModalBottomSheet2(context);
+                      pin1 = value;
+                      //print(_otpController.text);
+                    });
+                  },
+                  length: 4,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+
                   // focusedPinTheme: kFocusedPin(context),
                 ),
               ),
@@ -145,7 +226,6 @@ class _PanicModePinState extends State<PanicModePin> {
           );
         });
   }
-
 
   void _showModalBottomSheet2(BuildContext context) {
     showModalBottomSheet(
@@ -181,12 +261,15 @@ class _PanicModePinState extends State<PanicModePin> {
               ),
               SizedBox(height: getProportionateScreenHeight(40)),
 
-              /// Transaction PIN Box
+              /// Panic PIN Box
               Center(
                 child: Pinput(
                   onCompleted: (value) {
                     setState(() {
-                      //_otpController.text = value;
+                      pin2 = value;
+                      if (pin1 != pin2) {
+                        enabled = false;
+                      }
                       //print(_otpController.text);
                     });
                   },
@@ -194,22 +277,40 @@ class _PanicModePinState extends State<PanicModePin> {
                   obscureText: true,
                   textInputAction: TextInputAction.done,
 
-                  
                   // focusedPinTheme: kFocusedPin(context),
                 ),
               ),
               SizedBox(height: getProportionateScreenHeight(100)),
-              MyButton(
-                text: 'Continue',
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                enabled: true,
-              ),
+              isLoading
+                  ? MyLoadingButton()
+                  : MyButton(
+                      text: 'Continue',
+                      onTap: () async {
+                        if (await hasInternetConnection()) {
+                          setState(() {
+                            isLoading = true;
+                          });
+
+                          var isChanged = await ChangePanicPin(
+                              new ChangePanicPinModel(
+                                  oldPanicPin: pin0, newPanicPin: pin1));
+
+                          if(isChanged!)
+                          {
+                            Navigator.pop(context);
+                          }
+                        }
+                        setState(() {
+                          
+                          isLoading = false;
+                        });
+                      },
+                      enabled: enabled,
+                    ),
               SizedBox(height: getProportionateScreenHeight(20))
             ]),
           );
         });
   }
 
-}
+  }

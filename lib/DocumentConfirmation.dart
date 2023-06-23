@@ -87,13 +87,14 @@ class _DocumentConfirmationState extends State<DocumentConfirmation> {
             SizedBox(
               height: getProportionateScreenHeight(60),
             ),
+            isLoading ? MyLoadingButton() :
             MyButton(text: "submit", onTap: () async{
               if (await hasInternetConnection()) {
                       //push to home page OR LOGIN PAGE after creating the account
                       setState(() {
                         isLoading = true;
                       });
-                      storeEmail("oluwatobi.togun@stu.cu.edu.ng");
+                      
                       var email = await getEmail();
                       var isSent = await PerformKYC(email!, widget.type, widget.Id, File(widget.imgPath));
 
@@ -118,6 +119,9 @@ class _DocumentConfirmationState extends State<DocumentConfirmation> {
                         }
                       }
                     }
+                    setState(() {
+                      isLoading = false;
+                    });
             }, enabled: true)
           ],
         ),

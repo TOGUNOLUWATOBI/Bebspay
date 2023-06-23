@@ -177,19 +177,7 @@ class _Dashboard extends State<Dashboard> {
               SizedBox(
                 height: getProportionateScreenHeight(61),
               ),
-              // SizedBox(
-              //   width: MediaQuery.of(context).size.width,
-              //   height: 20,
-              //   child: Expanded(
-              //     child: OverflowBox(
-              //         maxWidth: MediaQuery.of(context).size.width,
-              //         child: Divider(
-              //           thickness: 2,
-              //           height: 2,
-              //           color: Color(0xffA9A5AF),
-              //         )),
-              //   ),
-              // ),
+             
               SizedBox(
                 height: getProportionateScreenHeight(46),
               ),
