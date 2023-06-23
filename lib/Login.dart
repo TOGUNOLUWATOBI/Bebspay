@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app/AddPin.dart';
 import 'package:app/IdentificationPage.dart';
 import 'package:app/Model/Authentication/LoginRequestModel.dart';
 import 'package:app/size_config.dart';
@@ -348,7 +349,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     password: password.text));
                             if (loginResponseModel != null) {
                               storeEmail(email.text);
-
+                              if (details == null) {
+                                details = await GetDashboardDetails();
+                              } 
                               storeToken(loginResponseModel.accessToken!);
                               if (!loginResponseModel.isKycComplete!) {
                                 setState(() {
@@ -365,13 +368,36 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 );
                               }
-                              if (details == null) {
-                                details = await GetDashboardDetails();
-                              } else if (details != null) {
+                              if (!loginResponseModel.isPINSet!) {
                                 setState(() {
                                   isLoading = false;
                                 });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return AddPinPage(pinType: "Transaction");
+                                    },
+                                  ),
+                                );
                               }
+                              if (!loginResponseModel.isPanicPINSet!) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return AddPinPage(pinType: "Panic");
+                                    },
+                                  ),
+                                );
+                              }
+                              else{
+                              if (details == null) {
+                                details = await GetDashboardDetails();
+                              } 
                               if (details != null) {
                                 setState(() {
                                   isLoading = false;
@@ -387,6 +413,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 );
                               }
+                            }
                             }
                           } else {
                             setState(() {

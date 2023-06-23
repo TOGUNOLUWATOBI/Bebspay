@@ -1,3 +1,4 @@
+import 'package:app/Model/RequestModel/AddPanicPinModel.dart';
 import 'package:app/Model/RequestModel/AddTransactionPinModel.dart';
 import 'package:app/PinCofirmationPage.dart';
 import 'package:app/Service/Authentication/Account.dart';
@@ -7,10 +8,13 @@ import 'package:app/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
-class AddPinPage extends StatefulWidget {
-  const AddPinPage({super.key, required this.pinType});
-  final String pinType;
+import 'Model/Account/DashboardDetails.dart';
+import 'components/BottomNavigationBar.dart';
 
+class AddPinPage extends StatefulWidget {
+  const AddPinPage({super.key, required this.pinType, this.details});
+  final String pinType;
+  final DashboardDetails? details;
   @override
   State<AddPinPage> createState() => _AddPinPageState();
 }
@@ -66,7 +70,7 @@ class _AddPinPageState extends State<AddPinPage> {
             //TODO: ask chizaram for help to align this text to the center
             Align(
               child: Text(
-                "Add Your $widget.pinType Pin to protect your transactions ",
+                "Add Your ${widget.pinType} Pin to protect your transactions ",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
@@ -79,7 +83,7 @@ class _AddPinPageState extends State<AddPinPage> {
               height: getProportionateScreenHeight(200),
             ),
             MyButton(
-                text: "Add $widget.pinType Pin",
+                text: "Add ${widget.pinType} Pin",
                 onTap: () {
                   //TODO: talk to chizaram to implement this part of the screen
                   _showModalBottomSheet1(context);
@@ -89,7 +93,6 @@ class _AddPinPageState extends State<AddPinPage> {
     ));
   }
 
- 
   void _showModalBottomSheet1(BuildContext context) {
     showModalBottomSheet(
         context: context,
@@ -116,7 +119,7 @@ class _AddPinPageState extends State<AddPinPage> {
               ),
               SizedBox(height: getProportionateScreenHeight(5)),
               Text(
-                'Enter your  $widget.pinType PIN below to continue',
+                'Enter your  ${widget.pinType} PIN below to continue',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!
@@ -124,7 +127,7 @@ class _AddPinPageState extends State<AddPinPage> {
               ),
               SizedBox(height: getProportionateScreenHeight(40)),
 
-              /// $widget.pinType PIN Box
+              /// ${widget.pinType} PIN Box
               Center(
                 child: Pinput(
                   onCompleted: (value) {
@@ -182,7 +185,7 @@ class _AddPinPageState extends State<AddPinPage> {
               ),
               SizedBox(height: getProportionateScreenHeight(5)),
               Text(
-                'Confirm your $widget.pinType PIN below to continue',
+                'Confirm your ${widget.pinType} PIN below to continue',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!
@@ -190,7 +193,7 @@ class _AddPinPageState extends State<AddPinPage> {
               ),
               SizedBox(height: getProportionateScreenHeight(40)),
 
-              /// $widget.pinType PIN Box
+              /// ${widget.pinType} PIN Box
               Center(
                 child: Pinput(
                   onCompleted: (value) {
@@ -219,20 +222,45 @@ class _AddPinPageState extends State<AddPinPage> {
                           setState(() {
                             isLoading = true;
                           });
+                          if (widget.pinType == "Transaction") {
+                            var isChanged = await AddTransactionPin(
+                                new AddTransactionPinModel(trxPin: pin2));
 
-                          var isChanged = await AddTransactionPin(
-                              new AddTransactionPinModel(
-                                  trxPin: pin2));
+                            if (isChanged!) {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AddPinPage(
+                                            pinType: "Panic",
+                                            details: widget.details,
+                                          )));
+                            }
+                          } else {
+                            var isChanged = await AddPanicPin(
+                                new AddPanicPinModel(panicPin: pin2));
 
-                          if(isChanged!)
-                          {
-                            Navigator.pop(context);
+                            if (isChanged!) {
+                              if (widget.details != null) {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return ButtomNavBar(
+                                          details: widget.details);
+                                    },
+                                  ),
+                                );
+                              } else {
+                                Navigator.pop(context);
+                              }
+                            }
                           }
+                          setState(() {
+                            isLoading = false;
+                          });
                         }
-                        setState(() {
-                          
-                          isLoading = false;
-                        });
                       },
                       enabled: enabled,
                     ),
