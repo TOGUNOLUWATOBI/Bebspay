@@ -20,7 +20,7 @@ class _ChangePinPageState extends State<ChangePinPage> {
   String pin1 = "";
   String pin0 = "";
   String pin2 = "";
-  bool enabled = true;
+  bool enabled = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -267,8 +267,8 @@ class _ChangePinPageState extends State<ChangePinPage> {
                   onCompleted: (value) {
                     setState(() {
                       pin2 = value;
-                      if (pin1 != pin2) {
-                        enabled = false;
+                      if (pin1 == pin2) {
+                        enabled = true;
                       }
                       //print(_otpController.text);
                     });

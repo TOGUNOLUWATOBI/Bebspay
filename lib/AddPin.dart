@@ -1,21 +1,21 @@
-import 'package:app/Model/RequestModel/ChangePanicPinModel.dart';
+import 'package:app/Model/RequestModel/AddTransactionPinModel.dart';
+import 'package:app/PinCofirmationPage.dart';
 import 'package:app/Service/Authentication/Account.dart';
+import 'package:app/Utility/Utility.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
-import 'Model/RequestModel/CheckTransactionPinModel.dart';
-import 'Utility/Utility.dart';
-
-class PanicModePin extends StatefulWidget {
-  const PanicModePin({super.key});
+class AddPinPage extends StatefulWidget {
+  const AddPinPage({super.key, required this.pinType});
+  final String pinType;
 
   @override
-  State<PanicModePin> createState() => _PanicModePinState();
+  State<AddPinPage> createState() => _AddPinPageState();
 }
 
-class _PanicModePinState extends State<PanicModePin> {
+class _AddPinPageState extends State<AddPinPage> {
   bool isLoading = false;
   String pin1 = "";
   String pin0 = "";
@@ -66,7 +66,7 @@ class _PanicModePinState extends State<PanicModePin> {
             //TODO: ask chizaram for help to align this text to the center
             Align(
               child: Text(
-                "Change Your Panic Pin to protect your account during emergency ",
+                "Add Your $widget.pinType Pin to protect your transactions ",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
@@ -79,88 +79,17 @@ class _PanicModePinState extends State<PanicModePin> {
               height: getProportionateScreenHeight(200),
             ),
             MyButton(
-                text: "Change Panic Pin",
+                text: "Add $widget.pinType Pin",
                 onTap: () {
                   //TODO: talk to chizaram to implement this part of the screen
-                  _showModalBottomSheet(context);
+                  _showModalBottomSheet1(context);
                 },
                 enabled: true)
           ]))),
     ));
   }
 
-  void _showModalBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        isDismissible: true,
-        builder: (context) {
-          return Container(
-            padding: EdgeInsets.only(
-                top: getProportionateScreenHeight(20),
-                left: getProportionateScreenWidth(20),
-                right: getProportionateScreenWidth(20),
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              color: Colors.white,
-            ),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Center(
-                child: Text(
-                  'Enter PIN',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-              ),
-              SizedBox(height: getProportionateScreenHeight(5)),
-              Text(
-                'Enter your old Panic PIN below to continue',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: getProportionateScreenHeight(40)),
-
-              /// Panic PIN Box
-              Center(
-                child: Pinput(
-                  onCompleted: (value) {
-                    setState(() {
-                      _showModalBottomSheet2(context);
-                      pin0 = value;
-                      //print(_otpController.text);
-                    });
-                  },
-                  length: 4,
-                  obscureText: true,
-                  textInputAction: TextInputAction.done,
-
-                  // focusedPinTheme: kFocusedPin(context),
-                ),
-              ),
-              SizedBox(height: getProportionateScreenHeight(100)),
-              MyButton(
-                text: 'Continue',
-                onTap: () async {
-                  if (await hasInternetConnection()) {
-                    var isvalidpin = await CheckTransactionPanicPin(
-                        new CheckTransactionPinModel(trxPin: pin0));
-                    if (isvalidpin!) {
-                      Navigator.pop(context);
-                      _showModalBottomSheet1(context);
-                    }
-                  }
-                },
-                enabled: true,
-              ),
-              SizedBox(height: getProportionateScreenHeight(20))
-            ]),
-          );
-        });
-  }
-
+ 
   void _showModalBottomSheet1(BuildContext context) {
     showModalBottomSheet(
         context: context,
@@ -187,7 +116,7 @@ class _PanicModePinState extends State<PanicModePin> {
               ),
               SizedBox(height: getProportionateScreenHeight(5)),
               Text(
-                'Enter your new Panic PIN below to continue',
+                'Enter your  $widget.pinType PIN below to continue',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!
@@ -195,7 +124,7 @@ class _PanicModePinState extends State<PanicModePin> {
               ),
               SizedBox(height: getProportionateScreenHeight(40)),
 
-              /// Panic PIN Box
+              /// $widget.pinType PIN Box
               Center(
                 child: Pinput(
                   onCompleted: (value) {
@@ -253,7 +182,7 @@ class _PanicModePinState extends State<PanicModePin> {
               ),
               SizedBox(height: getProportionateScreenHeight(5)),
               Text(
-                'Confirm your Panic PIN below to continue',
+                'Confirm your $widget.pinType PIN below to continue',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!
@@ -261,7 +190,7 @@ class _PanicModePinState extends State<PanicModePin> {
               ),
               SizedBox(height: getProportionateScreenHeight(40)),
 
-              /// Panic PIN Box
+              /// $widget.pinType PIN Box
               Center(
                 child: Pinput(
                   onCompleted: (value) {
@@ -291,9 +220,9 @@ class _PanicModePinState extends State<PanicModePin> {
                             isLoading = true;
                           });
 
-                          var isChanged = await ChangePanicPin(
-                              new ChangePanicPinModel(
-                                  oldPanicPin: pin0, newPanicPin: pin1));
+                          var isChanged = await AddTransactionPin(
+                              new AddTransactionPinModel(
+                                  trxPin: pin2));
 
                           if(isChanged!)
                           {
@@ -312,5 +241,4 @@ class _PanicModePinState extends State<PanicModePin> {
           );
         });
   }
-
-  }
+}
