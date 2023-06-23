@@ -17,7 +17,7 @@ class _ChnagePasswordPageState extends State<ChnagePasswordPage> {
   bool isVisible = false;
   bool isVisible1 = false;
   bool isVisible2 = false;
-
+  bool isLoading = false;
   TextEditingController password = TextEditingController();
   TextEditingController cPassword = TextEditingController();
 
@@ -167,7 +167,11 @@ class _ChnagePasswordPageState extends State<ChnagePasswordPage> {
                   },
                 ),
                 SizedBox(height:getProportionateScreenHeight(95)),
+                isLoading ? MyLoadingButton() :
                 MyButton(text: "Submit", onTap: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
                   var isReset = await ResetPassword(ChangePasswordRequestModel(password: password.text));
 
                   if (isReset) {
@@ -175,6 +179,11 @@ class _ChnagePasswordPageState extends State<ChnagePasswordPage> {
                         SnackBar(content: Text("Password Changed Successfully")));
                     Navigator.pop(context);
                   }
+                  password.clear();
+                  cPassword.clear();
+                  setState(() {
+                    isLoading =false;
+                  });
                 }, enabled: true)
             ]),
           )),

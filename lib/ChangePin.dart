@@ -1,4 +1,8 @@
+import 'package:app/Model/RequestModel/ChangeTransactionPinModel.dart';
+import 'package:app/Model/RequestModel/CheckTransactionPinModel.dart';
 import 'package:app/PinCofirmationPage.dart';
+import 'package:app/Service/Authentication/Account.dart';
+import 'package:app/Utility/Utility.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +16,11 @@ class ChangePinPage extends StatefulWidget {
 }
 
 class _ChangePinPageState extends State<ChangePinPage> {
+  bool isLoading = false;
+  String pin1 = "";
+  String pin0 = "";
+  String pin2 = "";
+  bool enabled = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +115,7 @@ class _ChangePinPageState extends State<ChangePinPage> {
               ),
               SizedBox(height: getProportionateScreenHeight(5)),
               Text(
-                'Enter your Transaction PIN below to continue',
+                'Enter your old Transaction PIN below to continue',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium!
@@ -120,7 +129,7 @@ class _ChangePinPageState extends State<ChangePinPage> {
                   onCompleted: (value) {
                     setState(() {
                       _showModalBottomSheet2(context);
-                      //_otpController.text = value;
+                      pin0 = value;
                       //print(_otpController.text);
                     });
                   },
@@ -128,7 +137,78 @@ class _ChangePinPageState extends State<ChangePinPage> {
                   obscureText: true,
                   textInputAction: TextInputAction.done,
 
-                  
+                  // focusedPinTheme: kFocusedPin(context),
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(100)),
+              MyButton(
+                text: 'Continue',
+                onTap: () async {
+                  if (await hasInternetConnection()) {
+                    var isvalidpin = await CheckTransactionPanicPin(
+                        new CheckTransactionPinModel(trxPin: pin0));
+                    if (isvalidpin!) {
+                      Navigator.pop(context);
+                      _showModalBottomSheet1(context);
+                    }
+                  }
+                },
+                enabled: true,
+              ),
+              SizedBox(height: getProportionateScreenHeight(20))
+            ]),
+          );
+        });
+  }
+
+  void _showModalBottomSheet1(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: true,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(
+                top: getProportionateScreenHeight(20),
+                left: getProportionateScreenWidth(20),
+                right: getProportionateScreenWidth(20),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              color: Colors.white,
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Center(
+                child: Text(
+                  'Enter PIN',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(5)),
+              Text(
+                'Enter your new Transaction PIN below to continue',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: getProportionateScreenHeight(40)),
+
+              /// Transaction PIN Box
+              Center(
+                child: Pinput(
+                  onCompleted: (value) {
+                    setState(() {
+                      _showModalBottomSheet2(context);
+                      pin1 = value;
+                      //print(_otpController.text);
+                    });
+                  },
+                  length: 4,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+
                   // focusedPinTheme: kFocusedPin(context),
                 ),
               ),
@@ -146,7 +226,6 @@ class _ChangePinPageState extends State<ChangePinPage> {
           );
         });
   }
-
 
   void _showModalBottomSheet2(BuildContext context) {
     showModalBottomSheet(
@@ -187,7 +266,10 @@ class _ChangePinPageState extends State<ChangePinPage> {
                 child: Pinput(
                   onCompleted: (value) {
                     setState(() {
-                      //_otpController.text = value;
+                      pin2 = value;
+                      if (pin1 != pin2) {
+                        enabled = false;
+                      }
                       //print(_otpController.text);
                     });
                   },
@@ -195,18 +277,36 @@ class _ChangePinPageState extends State<ChangePinPage> {
                   obscureText: true,
                   textInputAction: TextInputAction.done,
 
-                  
                   // focusedPinTheme: kFocusedPin(context),
                 ),
               ),
               SizedBox(height: getProportionateScreenHeight(100)),
-              MyButton(
-                text: 'Continue',
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                enabled: true,
-              ),
+              isLoading
+                  ? MyLoadingButton()
+                  : MyButton(
+                      text: 'Continue',
+                      onTap: () async {
+                        if (await hasInternetConnection()) {
+                          setState(() {
+                            isLoading = true;
+                          });
+
+                          var isChanged = await ChangeTransactionPin(
+                              new ChangeTransactionPinModel(
+                                  oldTrxPin: pin0, newTrxPin: pin1));
+
+                          if(isChanged!)
+                          {
+                            Navigator.pop(context);
+                          }
+                        }
+                        setState(() {
+                          
+                          isLoading = false;
+                        });
+                      },
+                      enabled: enabled,
+                    ),
               SizedBox(height: getProportionateScreenHeight(20))
             ]),
           );
