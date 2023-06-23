@@ -10,8 +10,10 @@ class LoginResponseModel {
     String? tokenType;
     DateTime? expiresIn;
     bool? isKycComplete;
+    bool? isPINSet;
+    bool? isPanicPINSet;
 
-    LoginResponseModel({this.email, this.accessToken, this.tokenType, this.expiresIn}); 
+    LoginResponseModel({this.email, this.accessToken, this.tokenType, this.expiresIn, this.isKycComplete, this.isPINSet, this.isPanicPINSet}); 
 
     LoginResponseModel.fromJson(Map<String, dynamic> json) {
         email = json['email'];
@@ -19,6 +21,8 @@ class LoginResponseModel {
         tokenType = json['tokenType'];
         expiresIn = DateTime.tryParse(json['expiresIn']);
         isKycComplete = json['isKycComplete'];
+        isPINSet = json['isPINSet'];
+        isPanicPINSet = json['isPanicPINSet'];
     }
 
     Map<String, dynamic> toJson() {
@@ -28,6 +32,8 @@ class LoginResponseModel {
         data['tokenType'] = tokenType;
         data['expiresIn'] = expiresIn;
         data['isKycComplete'] = isKycComplete;
+        data['isPanicPINSet'] = isPanicPINSet;
+        data['isPINSet'] = isPINSet;
         return data;
     }
 }

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pinput.dart';
 import 'Model/Account/Banks.dart';
+import 'Model/RequestModel/CheckTransactionPinModel.dart';
 import 'PinCofirmationPage.dart';
 import 'Service/Authentication/Account.dart';
 import 'components/BalanceContainer.dart';
@@ -34,9 +35,10 @@ class _TransferPageState extends State<TransferPage> {
   final GlobalKey<FormState> formkey = GlobalKey();
   TextEditingController amount = TextEditingController();
   TextEditingController accountNumber = TextEditingController();
-  TextEditingController description= TextEditingController();
+  TextEditingController description = TextEditingController();
   TextEditingController pinController = TextEditingController();
   bool enabled = false;
+  String pin = "";
   VerifyAccountUserResponseModel? accountBeneficiary;
   String? accountName;
   Bank? dropdownValue;
@@ -182,7 +184,7 @@ class _TransferPageState extends State<TransferPage> {
                           new VerifyAccountUserRequestModel(
                               accountNumber: accountNumber.text,
                               bankName: newValue!.bankName!));
-                      
+
                       setState(() {
                         dropdownValue = newValue!;
                       });
@@ -191,11 +193,9 @@ class _TransferPageState extends State<TransferPage> {
                         setState(() {
                           accountName = accountBeneficiary!.accountName;
                         });
-                      }
-                      else
-                      {
+                      } else {
                         setState(() {
-                          accountName ="";
+                          accountName = "";
                         });
                       }
                     },
@@ -248,7 +248,7 @@ class _TransferPageState extends State<TransferPage> {
                       },
                     ),
                     //TODO: ask chizaram how to go about this: the button should become enabled once it has a value >=100
-                    onFocusChange: (value) async{
+                    onFocusChange: (value) async {
                       intamount = int.tryParse(amount.text);
                       if (intamount != null) {
                         if (accountName == "" ||
@@ -257,11 +257,10 @@ class _TransferPageState extends State<TransferPage> {
                           setState(() {
                             enabled = false;
                           });
-                        } else  {
+                        } else {
                           fee = await GetFeeAmount(intamount!);
-                          setState(()  {
+                          setState(() {
                             enabled = true;
-                            
                           });
                         }
                       }
@@ -286,7 +285,6 @@ class _TransferPageState extends State<TransferPage> {
                         borderSide: BorderSide(color: Color(0xff979797)),
                       ),
                     ),
-                    
                     validator: (value) {
                       //TODO: ask chizaram how to go about this
                       if (value!.isEmpty) {
@@ -302,7 +300,6 @@ class _TransferPageState extends State<TransferPage> {
                 MyButton(
                     text: "Continue",
                     onTap: () async {
-                      
                       _showModalBottomSheet(context);
                     },
                     //TODO: change this to the enabled parameter
@@ -350,12 +347,12 @@ class _TransferPageState extends State<TransferPage> {
               Center(
                 child: Pinput(
                   controller: pinController,
-                  // onCompleted: (value) {
-                  //   setState(() {
-                  //     //_otpController.text = value;
-                  //     //print(_otpController.text);
-                  //   });
-                  // },
+                  onCompleted: (value) {
+                    setState(() {
+                      pin = value;
+                      //print(_otpController.text);
+                    });
+                  },
                   length: 4,
 
                   obscureText: true,
@@ -367,12 +364,26 @@ class _TransferPageState extends State<TransferPage> {
               SizedBox(height: getProportionateScreenHeight(100)),
               MyButton(
                 text: 'Continue',
-                onTap: () async{
-                  
-                  String? latitude = await getLatitude();
-                  String? longitude = await getLongitude();
-                  InitiateTransfer(new TransferRequestModel(amount: intamount!, trxAmount: (intamount! + fee!), description: description.text, beneficiaryName: accountName!, beneficiaryAccountNumber: accountNumber.text, beneficiaryBank: dropdownValue!.bankName!, beneficiaryBankCode: dropdownValue!.bankCode!, latitude: latitude!, longitude: longitude!));
-                  Navigator.pop(context);
+                onTap: () async {
+                  if (await hasInternetConnection()) {
+                    var isPinValid = await CheckTransactionPanicPin(
+                        new CheckTransactionPinModel(trxPin: pin));
+                    if (isPinValid!) {
+                      String? latitude = await getLatitude();
+                      String? longitude = await getLongitude();
+                      InitiateTransfer(new TransferRequestModel(
+                          amount: intamount!,
+                          trxAmount: (intamount! + fee!),
+                          description: description.text,
+                          beneficiaryName: accountName!,
+                          beneficiaryAccountNumber: accountNumber.text,
+                          beneficiaryBank: dropdownValue!.bankName!,
+                          beneficiaryBankCode: dropdownValue!.bankCode!,
+                          latitude: latitude!,
+                          longitude: longitude!));
+                      Navigator.pop(context);
+                    }
+                  }
                 },
                 enabled: true,
               ),
