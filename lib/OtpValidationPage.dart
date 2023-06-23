@@ -220,7 +220,7 @@ class _OtpValidationPageState extends State<OtpValidation> {
                   height: getProportionateScreenHeight(140),
                 ),
                 //TODO: add timer for otp resend
-
+                isLoading ? MyLoadingButton() :
                 MyButton(
                   text: "Submit",
                   onTap: () async {
@@ -276,6 +276,9 @@ class _OtpValidationPageState extends State<OtpValidation> {
                         }
                       }
                     }
+                    setState(() {
+                      isLoading = false;
+                    });
                     // Navigator.pushAndRemoveUntil(context,
                     //           MaterialPageRoute(
                     //               //TODO: change the message here

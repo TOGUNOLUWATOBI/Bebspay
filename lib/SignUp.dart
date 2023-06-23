@@ -26,6 +26,7 @@ class _SignUpPageState extends State<SignUpPage> {
   bool isVisible = false;
   bool isChecked = false;
   String? dropdownValue = "Select One";
+  bool isLoading = false;
 
   String? selectedState;
   String? selectedCity;
@@ -1286,58 +1287,6 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: getProportionateScreenHeight(46),
               ),
-              // TextFormField(
-              //   decoration: InputDecoration(
-              //     hintText: "Gender",
-              //       labelText: "Gender",
-              //       labelStyle: TextStyle(color: Color(0xff979797)),
-              //       enabledBorder: UnderlineInputBorder(
-              //         borderSide: BorderSide(color: Color(0xff979797)),
-              //       ),
-              //       focusedBorder: UnderlineInputBorder(
-              //         borderSide: BorderSide(color: Color(0xff979797)),
-              //       ),
-              //       suffixIcon: DropdownButtonFormField(
-
-              //         onChanged: (String? newValue) {
-              //           setState(() {
-              //             dropdownValue = newValue;
-              //           });
-              //         },
-              //         items: <String>["Select One","Male", "Female"]
-              //             .map<DropdownMenuItem<String>>((String item) {
-              //           return DropdownMenuItem<String>(
-              //             value: item,
-              //             child: Text(
-              //               item,
-              //               style: TextStyle(fontSize: 18,fontFamily: "Opensans",color: Color(0xff979797)),
-
-              //             ),
-              //           );
-              //         }).toList(),
-              //         value: dropdownValue,
-              //       )),
-              // ),
-              // DropdownButton<String>(
-              //   value: dropdownValue,
-
-              //   items: <String>["Select One","Male", "Female"]
-              //       .map<DropdownMenuItem<String>>((String value) {
-              //     return DropdownMenuItem<String>(
-              //       value: value,
-              //       child: Text(
-              //         value,
-              //         style: TextStyle(fontSize: 18,fontFamily: "Opensans"),
-              //       ),
-              //     );
-              //   }).toList(),
-              //   // Step 5.
-              //   onChanged: (String? newValue) {
-              //     setState(() {
-              //       dropdownValue = newValue!;
-              //     });
-              //   },
-              // ),
               DropdownButtonFormField(
                   decoration: InputDecoration(
                     enabledBorder: UnderlineInputBorder(
@@ -1492,11 +1441,15 @@ class _SignUpPageState extends State<SignUpPage> {
               SizedBox(
                 height: getProportionateScreenHeight(46),
               ),
+              isLoading ? MyLoadingButton():
               MyButton(
                 text: ("Submit"),
                 onTap: isChecked
                     ? () async {
                         if (await hasInternetConnection()) {
+                          setState(() {
+                            isLoading = true;
+                          });
                           var signup = await SignUp(new SignUpRequestModel(
                               firstname: firstname.text,
                               lastname: lastname.text,
@@ -1517,7 +1470,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                         isPasswordReset: false)));
                           }
                         }
-                        
+                        setState(() {
+                          isLoading = false;
+                        });
                       }
                     : null,
                 enabled: isChecked,
