@@ -27,6 +27,9 @@ class _ButtomNavBarState extends State<ButtomNavBar> {
   
   onTap(index) {
     if (index == 1) {
+      setState(() {
+        
+      });
       _showModalBottomSheet(context);
     } else {
       setState(() {
@@ -153,7 +156,7 @@ class _ButtomNavBarState extends State<ButtomNavBar> {
                     Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>  AirtimePage()),);
+                        builder: (context) =>  AirtimePage(firstname: widget.details?.name!, accountNumber: widget.details?.accountNumber!, balance: widget.details?.balance!,)),);
                   },
                 ),
                 KDivider(),
