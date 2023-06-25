@@ -395,7 +395,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ),
                                   );
                                 }
-                                if (!loginResponseModel.isPINSet!) {
+                                else if (!loginResponseModel.isPINSet!) {
                                   setState(() {
                                     isLoading = false;
                                   });
