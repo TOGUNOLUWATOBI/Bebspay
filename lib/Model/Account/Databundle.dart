@@ -2,6 +2,7 @@
 //
 //     final dataBundle = dataBundleFromJson(jsonString);
 
+import 'package:meta/meta.dart';
 import 'dart:convert';
 
 DataBundle dataBundleFromJson(String str) => DataBundle.fromJson(json.decode(str));
@@ -9,68 +10,44 @@ DataBundle dataBundleFromJson(String str) => DataBundle.fromJson(json.decode(str
 String dataBundleToJson(DataBundle data) => json.encode(data.toJson());
 
 class DataBundle {
-    String? status;
-    String? message;
-    List<BillCategories>? data;
+    int id;
+    String billerCode;
+    String name;
+    double defaultCommission;
+    DateTime dateAdded;
+    String country;
+    bool isAirtime;
+    String billerName;
+    String itemCode;
+    String shortName;
+    int fee;
+    bool commissionOnFee;
+    String labelName;
+    int amount;
 
     DataBundle({
-        this.status,
-        this.message,
-        this.data,
+        required this.id,
+        required this.billerCode,
+        required this.name,
+        required this.defaultCommission,
+        required this.dateAdded,
+        required this.country,
+        required this.isAirtime,
+        required this.billerName,
+        required this.itemCode,
+        required this.shortName,
+        required this.fee,
+        required this.commissionOnFee,
+        required this.labelName,
+        required this.amount,
     });
 
     factory DataBundle.fromJson(Map<String, dynamic> json) => DataBundle(
-        status: json["status"],
-        message: json["message"],
-        data: List<BillCategories>.from(json["data"].map((x) => BillCategories.fromJson(x))),
-    );
-
-    Map<String, dynamic> toJson() => {
-        "status": status,
-        "message": message,
-        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
-    };
-}
-
-class BillCategories {
-    int? id;
-    String? billerCode;
-    String? name;
-    int? defaultCommission;
-    String? dateAdded;
-    String? country;
-    bool? isAirtime;
-    String? billerName;
-    String? itemCode;
-    String? shortName;
-    int? fee;
-    bool? commissionOnFee;
-    String? labelName;
-    int? amount;
-
-    BillCategories({
-        this.id,
-        this.billerCode,
-        this.name,
-        this.defaultCommission,
-        this.dateAdded,
-        this.country,
-        this.isAirtime,
-        this.billerName,
-        this.itemCode,
-        this.shortName,
-        this.fee,
-        this.commissionOnFee,
-        this.labelName,
-        this.amount,
-    });
-
-    factory BillCategories.fromJson(Map<String, dynamic> json) => BillCategories(
         id: json["id"],
         billerCode: json["biller_code"],
         name: json["name"],
-        defaultCommission: json["default_commission"],
-        dateAdded: json["date_added"],
+        defaultCommission: json["default_commission"].toDouble(),
+        dateAdded: DateTime.parse(json["date_added"]),
         country: json["country"],
         isAirtime: json["is_airtime"],
         billerName: json["biller_name"],
@@ -87,7 +64,7 @@ class BillCategories {
         "biller_code": billerCode,
         "name": name,
         "default_commission": defaultCommission,
-        "date_added": dateAdded,
+        "date_added": dateAdded.toIso8601String(),
         "country": country,
         "is_airtime": isAirtime,
         "biller_name": billerName,

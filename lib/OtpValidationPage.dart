@@ -203,9 +203,13 @@ class _OtpValidationPageState extends State<OtpValidation> {
                     TextButton(
                         onPressed: isButtonDisabled
                             ? null
-                            : () {
+                            : () async {
                                 resetTimer();
                                 startTimer();
+                                var email = await getEmail();
+                                if (email != null) {
+                                  await ResendOtp(email);
+                                }
                               },
                         child: Text(
                           "Resend Code",

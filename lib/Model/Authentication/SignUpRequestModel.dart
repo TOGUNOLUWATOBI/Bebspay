@@ -18,6 +18,7 @@ class SignUpRequestModel {
     String address;
     String state;
     String gender;
+    bool isAndroid;
 
     SignUpRequestModel({
         required this.firstname,
@@ -29,6 +30,7 @@ class SignUpRequestModel {
         required this.address,
         required this.state,
         required this.gender,
+        required this.isAndroid
     });
 
     factory SignUpRequestModel.fromJson(Map<String, dynamic> json) => SignUpRequestModel(
@@ -41,6 +43,7 @@ class SignUpRequestModel {
         address: json["Address"],
         state: json["State"],
         gender: json["Gender"],
+        isAndroid : json["isAndroid"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -53,5 +56,6 @@ class SignUpRequestModel {
         "Address": address,
         "State": state,
         "Gender": gender,
+        "isAndroid" : isAndroid
     };
 }

@@ -14,8 +14,9 @@ import 'package:flutter/services.dart';
 import 'Policy_Dialog.dart';
 
 class SignUpPage extends StatefulWidget {
+  final bool isAndroid;
   SignUpPage({
-    super.key,
+    super.key, required this.isAndroid,
   });
 
   @override
@@ -1186,7 +1187,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: getProportionateScreenHeight(46),
               ),
               TextFormField(
-                controller: email,
+                controller: PhoneNumber,
                 decoration: InputDecoration(
                   labelText: "PhoneNumber",
                   labelStyle: TextStyle(color: Color(0xff979797)),
@@ -1302,7 +1303,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   //value: dropdownValue,
                   onChanged: (String? newValue) {
                     setState(() {
-                      dropdownValue = newValue!;
+                      gender = newValue!;
                     });
                   },
                   items: dropdownItems),
@@ -1374,7 +1375,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         : [],
                     onChanged: (String? newValue) {
                       setState(() {
-                        dropdownValue = newValue!;
+                        selectedCity = newValue;
+                        
                       });
                     },
                   )),
@@ -1447,6 +1449,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 onTap: isChecked
                     ? () async {
                         if (await hasInternetConnection()) {
+                          storeEmail(email.text);
                           setState(() {
                             isLoading = true;
                           });
@@ -1459,7 +1462,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               lga: selectedCity!,
                               address: address.text,
                               state: selectedState!,
-                              gender: gender));
+                              gender: gender, isAndroid: widget.isAndroid));
                           if (signup != null) {
                             Navigator.push(
                                 context,
