@@ -31,6 +31,10 @@ Future<LoginResponseModel?> login(LoginRequestModel model) async {
     if (res.status != "Successful") {
       throw (res);
     } else {
+      if( res.data == null  && res.statusCode == "B05")
+      {
+         return LoginResponseModel(email: null);
+      }
       LoginResponseModel loginResponseModel =
           LoginResponseModel.fromJson(res.data);
       storeToken(loginResponseModel.accessToken!);
@@ -116,6 +120,37 @@ Future<bool> ResetPassword(ChangePasswordRequestModel model) async {
     return false;
   }
 }
+
+
+
+
+Future<bool> ResendOtp(String email) async {
+  String url =
+      "https://fypbackend.azurewebsites.net/Authentication/api/v1/ResendOtp?email=$email";
+
+  try {
+    var response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+    );
+
+    print(response.body);
+
+    var res = apiResponseFromJson(response.body);
+
+    //var res = json.decode(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      return true;
+    }
+  } catch (e) {
+    print(e);
+    return false;
+  }
+}
+
 
 Future<bool> ForgotPassword(String email) async {
   String url =
@@ -281,4 +316,18 @@ Future<String?> getEmail() async {
   String? email = await storage.read(key: 'email');
   print(email);
   return email;
+}
+
+void storeFCMToken(String FCMToken) async {
+  const storage = FlutterSecureStorage();
+  await storage.write(key: 'FCMToken', value: FCMToken);
+  
+}
+
+//method to retrieve token received on Login
+Future<String?> getFCMTokenn() async {
+  const storage = FlutterSecureStorage();
+  String? FCMToken = await storage.read(key: 'FCMToken');
+  print(FCMToken);
+  return FCMToken;
 }

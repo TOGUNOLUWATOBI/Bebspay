@@ -19,6 +19,7 @@ import '../../Model/Account/FundWalletDto.dart';
 import '../../Model/Account/VerifyAccountUserResponseModel.dart';
 import '../../Model/ApiResponse/ApiResponse.dart';
 import '../../Model/RequestModel/AddPanicPinModel.dart';
+import '../../Model/RequestModel/SaveFcmTokenRequestModel.dart';
 
 
 Future<Map<String, String>> createHeader() async {
@@ -368,6 +369,32 @@ Future<List<Bank>?> GetBanks () async
   }
 }
 
+Future<List<DataBundle>?> GetDataBundle(String serviceProvider) async
+{
+ String url =
+      "https://fypbackend.azurewebsites.net/Account/api/v1/GetDataBundles?serviceProvier=$serviceProvider";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: await createHeader(),
+            
+    );
+    print(response.body);
+    var res = apiResponseFromJson(response.body);
+
+    if (res.status != "Successful") {
+      throw (res);
+    } else {
+      var banks = List<DataBundle>.from(res.data['data'].map((x) => DataBundle.fromJson(x))).toList();
+      print(banks);
+      return banks ;
+    }
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
 
 Future<List<TransactionDto>?> GetTransactions (int count) async
 {
@@ -394,15 +421,42 @@ Future<List<TransactionDto>?> GetTransactions (int count) async
   }
 }
 
-Future<List<BillCategories>?> GetDataBundle (String serviceProvider) async
+// Future<List<BillCategories>?> GetDataBundle (String serviceProvider) async
+// {
+//  String url =
+//       "https://fypbackend.azurewebsites.net/Account/api/v1/GetDataBundles?serviceProvier=$serviceProvider";
+//   try {
+//     var response = await http.get(
+//       Uri.parse(url),
+//       headers: await createHeader(),
+            
+//     );
+//     print(response.body);
+//     var res = apiResponseFromJson(response.body);
+
+//     if (res.status != "Successful") {
+//       throw (res);
+//     } else {
+//       var dataBundles = List<BillCategories>.from(res.data.map((x) => BillCategories.fromJson(x)));
+//       return dataBundles ;
+//     }
+//   } catch (e) {
+//     print(e);
+//     return null;
+//   }
+// }
+
+
+
+Future<bool?> SaveFcmToken (SaveFcmTokenModel model) async
 {
  String url =
-      "https://fypbackend.azurewebsites.net/Account/api/v1/GetDataBundles?serviceProvier=$serviceProvider";
+      "https://fypbackend.azurewebsites.net/Authentication/api/v1/SaveFcmToken";
   try {
-    var response = await http.get(
+    var response = await http.post(
       Uri.parse(url),
       headers: await createHeader(),
-            
+      body: SaveFcmTokenModelToJson(model),      
     );
     print(response.body);
     var res = apiResponseFromJson(response.body);
@@ -410,16 +464,11 @@ Future<List<BillCategories>?> GetDataBundle (String serviceProvider) async
     if (res.status != "Successful") {
       throw (res);
     } else {
-      var dataBundles = List<BillCategories>.from(res.data.map((x) => BillCategories.fromJson(x)));
-      return dataBundles ;
+      return true;
     }
   } catch (e) {
     print(e);
-    return null;
+    return false;
   }
 }
-
-
-
-
 
