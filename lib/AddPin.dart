@@ -8,11 +8,12 @@ import 'package:app/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
+import 'Login.dart';
 import 'Model/Account/DashboardDetails.dart';
 import 'components/BottomNavigationBar.dart';
 
 class AddPinPage extends StatefulWidget {
-  const AddPinPage({super.key, required this.pinType, this.details});
+  const AddPinPage({super.key, required this.pinType, required this.details});
   final String pinType;
   final DashboardDetails? details;
   @override
@@ -237,12 +238,25 @@ class _AddPinPageState extends State<AddPinPage> {
                                           )));
                             }
                           } else {
-                            var isChanged = await AddPanicPin(
+                            bool change =false;
+                             var isChanged = await AddPanicPin(
                                 new AddPanicPinModel(panicPin: pin2));
-
-                            if (isChanged!) {
+                            setState(() {
+                               
+                              change = isChanged!;
+                              });
+                            if (change) {
                               if (widget.details != null) {
-                                Navigator.pop(context);
+                                Navigator.pushAndRemoveUntil(context,
+                              MaterialPageRoute(
+                                  //TODO: change the message here
+                                  builder: (context) {
+                            return MyHomePage(
+                              title: "Bebspay",
+                            );
+                          }), (r) {
+                            return false;
+                          });
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

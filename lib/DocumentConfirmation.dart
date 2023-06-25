@@ -27,8 +27,8 @@ class _DocumentConfirmationState extends State<DocumentConfirmation> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
               height: getProportionateScreenHeight(60),
@@ -65,7 +65,7 @@ class _DocumentConfirmationState extends State<DocumentConfirmation> {
             ),
             TextFormField(
               readOnly: true,
-              
+              textAlign: TextAlign.center,
               controller: TextEditingController(text: widget.Id),
               style: TextStyle(
                   color: Theme.of(context).primaryColor,
@@ -73,6 +73,7 @@ class _DocumentConfirmationState extends State<DocumentConfirmation> {
                   fontSize: 24,
                   fontWeight: FontWeight.bold),
               decoration: InputDecoration(
+                floatingLabelAlignment: FloatingLabelAlignment.center,
                 labelText: "${widget.type} number:",
                 labelStyle: TextStyle(color: Color(0xff979797)),
                 enabledBorder: UnderlineInputBorder(

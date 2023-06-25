@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:app/AddPin.dart';
 import 'package:app/IdentificationPage.dart';
 import 'package:app/Model/Authentication/LoginRequestModel.dart';
+import 'package:app/Model/RequestModel/SaveFcmTokenRequestModel.dart';
 import 'package:app/size_config.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'ForgotPasswordPage.dart';
 import 'Model/Account/DashboardDetails.dart';
+import 'OtpValidationPage.dart';
 import 'Service/Authentication/Account.dart';
 import 'Service/Authentication/Authentication.dart';
 import 'SignUp.dart';
@@ -49,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final storage = new FlutterSecureStorage();
   bool isLoading = false;
-
+  bool isAndroid = false;
   bool isVisible = false;
   List<CameraDescription>? cameras;
 
@@ -137,6 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await FirebaseMessaging.instance.getToken().then((value) {
       setState(() {
         mToken = value;
+        storeFCMToken(mToken!);
         print("My token is : $mToken");
       });
     });
@@ -170,6 +173,9 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       if (Platform.isAndroid) {
         deviceData = readAndroidBuildData(await deviceInfo.androidInfo);
+        setState(() {
+          isAndroid = true;
+        });
       } else if (Platform.isIOS) {
         deviceData = readIosDeviceInfo(await deviceInfo.iosInfo);
       } else if (Platform.isLinux) {
@@ -339,6 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           //TODO: properly do validation
                           if (!formkey.currentState!.validate()) return;
                           if (await hasInternetConnection()) {
+                            storeEmail(email.text);
                             //push to home page OR LOGIN PAGE after creating the account
                             setState(() {
                               isLoading = true;
@@ -348,72 +355,97 @@ class _MyHomePageState extends State<MyHomePage> {
                                     emailAddress: email.text,
                                     password: password.text));
                             if (loginResponseModel != null) {
-                              storeEmail(email.text);
-                              if (details == null) {
-                                details = await GetDashboardDetails();
-                              } 
-                              storeToken(loginResponseModel.accessToken!);
-                              if (!loginResponseModel.isKycComplete!) {
+                              if (loginResponseModel.email == null) {
                                 setState(() {
                                   isLoading = false;
                                 });
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    content: Text(
+                                        "check your email to verify your account")));
                                 Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                      return IdentificationPage(
-                                        cameras: cameras!,
-                                      );
-                                    },
-                                  ),
-                                );
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OtpValidation(
+                                            text:
+                                                "Check your email for the confirmation code required to Activate your account",
+                                            isPasswordReset: false)));
+                              } else {
+                                var token = await getFCMTokenn();
+                                await SaveFcmToken(new SaveFcmTokenModel(
+                                  token: token!,
+                                ));
+                                storeEmail(email.text);
+                                if (details == null) {
+                                  details = await GetDashboardDetails();
+                                }
+
+                                storeToken(loginResponseModel.accessToken!);
+                                if (!loginResponseModel.isKycComplete!) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                        return IdentificationPage(
+                                          cameras: cameras!,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                }
+                                if (!loginResponseModel.isPINSet!) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                        return AddPinPage(
+                                          pinType: "Transaction",
+                                          details: details,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                } else if (!loginResponseModel.isPanicPINSet!) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) {
+                                        return AddPinPage(
+                                          pinType: "Panic",
+                                          details: details,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                } else {
+                                  if (details == null) {
+                                    details = await GetDashboardDetails();
+                                  }
+                                  if (details != null) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  }
+                                  if (isLoading == false) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                          return ButtomNavBar(details: details);
+                                        },
+                                      ),
+                                    );
+                                  }
+                                }
                               }
-                              if (!loginResponseModel.isPINSet!) {
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                      return AddPinPage(pinType: "Transaction");
-                                    },
-                                  ),
-                                );
-                              }
-                              if (!loginResponseModel.isPanicPINSet!) {
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                      return AddPinPage(pinType: "Panic");
-                                    },
-                                  ),
-                                );
-                              }
-                              else{
-                              if (details == null) {
-                                details = await GetDashboardDetails();
-                              } 
-                              if (details != null) {
-                                setState(() {
-                                  isLoading = false;
-                                });
-                              }
-                              if (isLoading == false) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                      return ButtomNavBar(details: details);
-                                    },
-                                  ),
-                                );
-                              }
-                            }
                             }
                           } else {
                             setState(() {
@@ -454,7 +486,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SignUpPage()),
+                          MaterialPageRoute(
+                              builder: (context) => SignUpPage(
+                                    isAndroid: isAndroid,
+                                  )),
                         );
                       },
                     ),
