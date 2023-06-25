@@ -3,12 +3,14 @@ import 'package:app/ChangePassword.dart';
 import 'package:app/Model/Account/AccountDetails.dart';
 import 'package:app/SecurityPage.dart';
 import 'package:app/Service/Authentication/Account.dart';
+import 'package:app/Service/Authentication/Authentication.dart';
 import 'package:app/components/Container.dart';
 import 'package:app/components/my_button.dart';
 import 'package:app/size_config.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'Login.dart';
 import 'AccountDetails.dart';
 import 'Model/Account/DashboardDetails.dart';
 import 'Policy_Dialog.dart';
@@ -38,18 +40,19 @@ class _MoreScreenState extends State<MoreScreen> {
                 SizedBox(
                   height: getProportionateScreenHeight(60),
                 ),
-                isLoading? CircularProgressIndicator():
-                  CachedNetworkImage(
-                    imageUrl:
-                        //change this url
-                        //'https://drive.google.com/uc?id=1DKW_8cxs0vMyzqNWqhprXMwugI5rZwJl',
-                        'https://drive.google.com/uc?id=${widget.details.profilePicture!}',
-                    //TODO: check out how to use placeholders
-                    //placeholder:image(),
-                    
-                    height: getProportionateScreenHeight(70),
-                    width: getProportionateScreenWidth(70),
-                  ),
+                isLoading
+                    ? CircularProgressIndicator()
+                    : CachedNetworkImage(
+                        imageUrl:
+                            //change this url
+                            //'https://drive.google.com/uc?id=1DKW_8cxs0vMyzqNWqhprXMwugI5rZwJl',
+                            'https://drive.google.com/uc?id=${widget.details.profilePicture!}',
+                        //TODO: check out how to use placeholders
+                        //placeholder:image(),
+
+                        height: getProportionateScreenHeight(70),
+                        width: getProportionateScreenWidth(70),
+                      ),
                 SizedBox(
                   width: getProportionateScreenHeight(15),
                 ),
@@ -69,13 +72,13 @@ class _MoreScreenState extends State<MoreScreen> {
                         size: 20, color: Theme.of(context).primaryColor),
                     text: "Account Details",
                     onTap: () async {
-
                       var accountDetails = await GetAccountDetails();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          //TODO call the right endpoint here
-                            builder: (context) => AccountDetailsPage(accountDetails: accountDetails!)),
+                            //TODO call the right endpoint here
+                            builder: (context) => AccountDetailsPage(
+                                accountDetails: accountDetails!)),
                       );
                     }),
                 SizedBox(
@@ -135,10 +138,28 @@ class _MoreScreenState extends State<MoreScreen> {
                   height: getProportionateScreenHeight(117),
                 ),
                 //TODO: check how to do logout
-                MyButton(text: 'logout', onTap: () {}, enabled: true)
+                MyButton(
+                    text: 'logout',
+                    onTap: () {
+                      clearSecureStorage();
+                      
+
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyHomePage(
+                                    title: 'Bebspay',
+                                  )));
+                    },
+                    enabled: true)
               ]),
             )),
       ),
     );
+  }
+
+  void clearSecureStorage() async {
+    FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+    await secureStorage.deleteAll();
   }
 }
